@@ -863,6 +863,8 @@ function SettingsQuickAction({
 					<Text
 						variant={'labelMedium'}
 						numberOfLines={1}
+						adjustsFontSizeToFit
+						minimumFontScale={0.8}
 						style={[styles.quickActionLabel, { color: colors.onSurface }]}
 					>
 						{label}
@@ -870,6 +872,8 @@ function SettingsQuickAction({
 					<Text
 						variant={'labelSmall'}
 						numberOfLines={1}
+						adjustsFontSizeToFit
+						minimumFontScale={0.75}
 						style={{ color: colors.onSurfaceVariant }}
 					>
 						{value}
@@ -948,27 +952,31 @@ const styles = StyleSheet.create({
 	},
 	quickActions: {
 		flexDirection: 'row',
-		gap: 8,
+		flexWrap: 'wrap',
+		gap: 10,
 	},
 	quickAction: {
-		flex: 1,
-		minWidth: 0,
+		width: '48%',
 		borderRadius: 16,
 		borderWidth: StyleSheet.hairlineWidth,
 		overflow: 'hidden',
 	},
 	quickActionInner: {
-		padding: 10,
-		gap: 8,
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingHorizontal: 12,
+		paddingVertical: 10,
+		gap: 10,
 	},
 	quickActionIcon: {
-		width: 30,
-		height: 30,
-		borderRadius: 10,
+		width: 34,
+		height: 34,
+		borderRadius: 12,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
 	quickActionCopy: {
+		flex: 1,
 		minWidth: 0,
 	},
 	quickActionLabel: {
