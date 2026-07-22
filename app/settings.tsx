@@ -654,8 +654,6 @@ export default function SettingsScreen() {
 					/>
 				</SettingsSection>
 
-
-
 				<SettingsSection title={'About Kur Music'}>
 					<SettingsItem
 						icon={SparklesIcon}
@@ -677,7 +675,7 @@ export default function SettingsScreen() {
 					<SettingsItem
 						icon={CpuIcon}
 						title={'Audio Engine'}
-						subtitle={"New Road to Dreams (Engine)"}
+						subtitle={'New Road to Dreams (Engine)'}
 					/>
 					<SettingsItem
 						icon={InfoIcon}

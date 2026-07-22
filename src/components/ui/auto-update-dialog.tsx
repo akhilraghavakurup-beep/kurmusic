@@ -12,20 +12,13 @@ import { useState, useEffect, useCallback } from 'react';
 import Constants from 'expo-constants';
 import { useAppTheme, M3Shapes } from '@/lib/theme';
 import { Icon } from '@/src/components/ui/icon';
-import {
-	PackageIcon,
-	DownloadIcon,
-	CheckCircle2Icon,
-	AlertCircleIcon,
-	SparklesIcon,
-} from 'lucide-react-native';
+import { DownloadIcon, CheckCircle2Icon, AlertCircleIcon, SparklesIcon } from 'lucide-react-native';
 import {
 	checkForUpdates,
 	downloadUpdateApk,
 	triggerUpdateInstall,
 	type UpdateInfo,
 } from '@/src/application/services/update-service';
-import { useSettingsStore } from '@/src/application/state/settings-store';
 
 export function AutoUpdateDialog() {
 	const { colors } = useAppTheme();
@@ -33,9 +26,9 @@ export function AutoUpdateDialog() {
 
 	const [visible, setVisible] = useState(false);
 	const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
-	const [updateState, setUpdateState] = useState<
-		'idle' | 'downloading' | 'ready' | 'error'
-	>('idle');
+	const [updateState, setUpdateState] = useState<'idle' | 'downloading' | 'ready' | 'error'>(
+		'idle'
+	);
 	const [downloadProgress, setDownloadProgress] = useState(0);
 	const [localApkUri, setLocalApkUri] = useState('');
 
@@ -107,7 +100,10 @@ export function AutoUpdateDialog() {
 				<Dialog.Title style={{ color: colors.onSurface, paddingBottom: 0 }}>
 					<View style={styles.titleRow}>
 						<Icon as={SparklesIcon} size={22} color={colors.primary} />
-						<Text variant={'titleLarge'} style={{ color: colors.onSurface, fontWeight: '700' }}>
+						<Text
+							variant={'titleLarge'}
+							style={{ color: colors.onSurface, fontWeight: '700' }}
+						>
 							Update Available
 						</Text>
 					</View>
@@ -124,7 +120,10 @@ export function AutoUpdateDialog() {
 							/>
 						</View>
 						<View style={styles.headerText}>
-							<Text variant={'titleMedium'} style={{ color: colors.onSurface, fontWeight: '700' }}>
+							<Text
+								variant={'titleMedium'}
+								style={{ color: colors.onSurface, fontWeight: '700' }}
+							>
 								Kur Music v{updateInfo.latestVersion}
 							</Text>
 							<Text variant={'bodyMedium'} style={{ color: colors.onSurfaceVariant }}>
@@ -136,8 +135,12 @@ export function AutoUpdateDialog() {
 					<Divider style={[styles.divider, { backgroundColor: colors.outlineVariant }]} />
 
 					{/* Release Notes / Changelog */}
-					<Text variant={'labelLarge'} style={[styles.changelogTitle, { color: colors.primary }]}>
-						What's New in v{updateInfo.latestVersion}:
+					<Text
+						variant={'labelLarge'}
+						style={[styles.changelogTitle, { color: colors.primary }]}
+					>
+						{"What's New in v"}
+						{updateInfo.latestVersion}:
 					</Text>
 
 					<View
@@ -149,7 +152,10 @@ export function AutoUpdateDialog() {
 							},
 						]}
 					>
-						<ScrollView style={styles.changelogScroll} showsVerticalScrollIndicator={true}>
+						<ScrollView
+							style={styles.changelogScroll}
+							showsVerticalScrollIndicator={true}
+						>
 							<Text
 								variant={'bodyMedium'}
 								style={[styles.changelogText, { color: colors.onSurface }]}
@@ -162,7 +168,10 @@ export function AutoUpdateDialog() {
 					{/* Download Progress Status */}
 					{updateState === 'downloading' && (
 						<View style={styles.progressContainer}>
-							<Text variant={'bodyMedium'} style={{ color: colors.onSurface, marginBottom: 6 }}>
+							<Text
+								variant={'bodyMedium'}
+								style={{ color: colors.onSurface, marginBottom: 6 }}
+							>
 								Downloading update: {Math.round(downloadProgress * 100)}%
 							</Text>
 							<ProgressBar
@@ -176,7 +185,10 @@ export function AutoUpdateDialog() {
 					{updateState === 'ready' && (
 						<View style={styles.statusBox}>
 							<Icon as={CheckCircle2Icon} size={20} color={colors.primary} />
-							<Text variant={'bodyMedium'} style={{ color: colors.onSurface, fontWeight: '600' }}>
+							<Text
+								variant={'bodyMedium'}
+								style={{ color: colors.onSurface, fontWeight: '600' }}
+							>
 								Update Downloaded! Launching Installer...
 							</Text>
 						</View>
@@ -201,18 +213,28 @@ export function AutoUpdateDialog() {
 							</Text>
 						</View>
 					) : updateState === 'ready' ? (
-						<Button mode={'contained'} onPress={handleInstallAgain} textColor={colors.onPrimary}>
+						<Button
+							mode={'contained'}
+							onPress={handleInstallAgain}
+							textColor={colors.onPrimary}
+						>
 							Install Update
 						</Button>
 					) : (
 						<View style={styles.rightButtons}>
-							<Button mode={'text'} onPress={handleDismiss} textColor={colors.onSurfaceVariant}>
+							<Button
+								mode={'text'}
+								onPress={handleDismiss}
+								textColor={colors.onSurfaceVariant}
+							>
 								Dismiss
 							</Button>
 
 							<Button
 								mode={'contained'}
-								icon={() => <Icon as={DownloadIcon} size={16} color={colors.onPrimary} />}
+								icon={() => (
+									<Icon as={DownloadIcon} size={16} color={colors.onPrimary} />
+								)}
 								onPress={handleUpdateNow}
 								textColor={colors.onPrimary}
 							>

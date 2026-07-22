@@ -1,7 +1,6 @@
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
-import { BlurView } from 'expo-blur';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { router, usePathname } from 'expo-router';
@@ -16,15 +15,15 @@ import Animated, {
 	LinearTransition,
 	ZoomIn,
 	runOnJS,
-	useSharedValue,
-	useAnimatedStyle,
-	withTiming,
 } from 'react-native-reanimated';
 import { Icon } from '@/src/components/ui/icon';
-import { ChevronLeftIcon, DownloadIcon, CheckIcon, LoaderCircleIcon, ListMusic } from 'lucide-react-native';
-
-const thumbUpRegular = require('@/assets/animation/system-regular-124-thumb-up-hover-thumb-up.json') as AnimationObject;
-const thumbUpSolid = require('@/assets/animation/system-solid-124-thumb-up-hover-thumb-up.json') as AnimationObject;
+import {
+	ChevronLeftIcon,
+	DownloadIcon,
+	CheckIcon,
+	LoaderCircleIcon,
+	ListMusic,
+} from 'lucide-react-native';
 import { PlayerControls } from '@/src/components/player/player-controls';
 import { ProgressBar } from '@/src/components/player/progress-bar';
 import { TrackOptionsMenu } from '@/src/components/track-options-menu';
@@ -39,10 +38,14 @@ import { useCurrentTrack, usePlayerError } from '@/src/application/state/player-
 import { useIsDownloaded, useIsDownloading } from '@/src/application/state/download-store';
 import { useDownloadActions } from '@/src/hooks/use-download-actions';
 import { usePlayerActions } from '@/src/hooks/use-player';
-import { usePreferredStreamQuality, useSettingsStore } from '@/src/application/state/settings-store';
+import { usePreferredStreamQuality } from '@/src/application/state/settings-store';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const BLUR_INTENSITY = 120;
+const thumbUpRegular =
+	require('@/assets/animation/system-regular-124-thumb-up-hover-thumb-up.json') as AnimationObject;
+const thumbUpSolid =
+	require('@/assets/animation/system-solid-124-thumb-up-hover-thumb-up.json') as AnimationObject;
+
 const DARK_SCRIM_OPACITY = 0.6;
 function hexToRgbArray(hex: string): [number, number, number, number] {
 	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -64,8 +67,6 @@ function replaceColorsInSource(source: AnimationObject, color: string): Animatio
 	);
 	return JSON.parse(replaced) as AnimationObject;
 }
-
-
 
 export default function PlayerScreen() {
 	const currentTrack = useCurrentTrack();
@@ -98,10 +99,11 @@ function PlayerScreenContent() {
 	const preferredStreamQuality = usePreferredStreamQuality();
 
 	const coloredSource = useMemo(
-		() => replaceColorsInSource(
-			isFavorite ? thumbUpSolid : thumbUpRegular,
-			isFavorite ? colors.primary : colors.onSurfaceVariant
-		),
+		() =>
+			replaceColorsInSource(
+				isFavorite ? thumbUpSolid : thumbUpRegular,
+				isFavorite ? colors.primary : colors.onSurfaceVariant
+			),
 		[isFavorite, colors.primary, colors.onSurfaceVariant]
 	);
 
@@ -193,187 +195,199 @@ function PlayerScreenContent() {
 						<Animated.View entering={FadeInDown.duration(320)} style={styles.header}>
 							<IconButton
 								icon={() => (
-								<Icon as={ChevronLeftIcon} size={24} color={colors.onSurface} />
-							)}
-							onPress={() => router.back()}
-						/>
-						<Text variant={'labelLarge'} style={{ color: colors.onSurfaceVariant }}>
-							Now Playing
-						</Text>
-						<View style={styles.headerActions}>
-							<IconButton
-								icon={() => (
-									<Icon
-										as={ListMusic}
-										size={20}
-										color={colors.onSurfaceVariant}
-									/>
+									<Icon as={ChevronLeftIcon} size={24} color={colors.onSurface} />
 								)}
-								onPress={openQueueSheet}
-								size={20}
-								accessibilityLabel={'Open queue'}
+								onPress={() => router.back()}
 							/>
-							<TrackOptionsMenu
-								track={currentTrack}
-								source={'player'}
-								orientation={'horizontal'}
-								iconColor={colors.onSurfaceVariant}
-							/>
-						</View>
-					</Animated.View>
-
-					<Animated.View entering={ZoomIn.springify().damping(16).delay(60)} style={styles.artworkContainer}>
-						<View
-							style={[
-								styles.artworkWrapper,
-								artworkLoaded && artworkShadowStyle,
-							]}
-						>
-							{artworkUrl ? (
-								<Image
-									source={{ uri: artworkUrl }}
-									style={styles.artwork}
-									contentFit={'contain'}
-									transition={300}
-									cachePolicy={'memory-disk'}
-									recyclingKey={currentTrack.id.value}
-									onLoad={handleArtworkLoad}
-								/>
-							) : (
-								<View
-									style={[
-										styles.artwork,
-										styles.artworkPlaceholder,
-										{ backgroundColor: appColors.surfaceContainerHighest },
-									]}
-								/>
-							)}
-						</View>
-					</Animated.View>
-
-					<Animated.View
-						entering={FadeInUp.duration(320).delay(120)}
-						layout={LinearTransition.springify().damping(18)}
-						style={styles.trackInfo}
-					>
-						<View style={styles.trackInfoText}>
-							<Animated.View
-								key={`track-meta-${currentTrack.id.value}`}
-								entering={FadeInUp.duration(260)}
-								exiting={FadeOut.duration(160)}
-							>
-								<Text
-									numberOfLines={2}
-									adjustsFontSizeToFit={true}
-									minimumFontScale={0.75}
-									style={{
-										color: colors.onSurface,
-										fontSize: 22,
-										fontWeight: '800',
-										letterSpacing: -0.3,
-										lineHeight: 28,
-										marginBottom: 4,
-									}}
-								>
-									{currentTrack.title}
-								</Text>
-								<Text
-									numberOfLines={1}
-									style={{
-										color: colors.onSurfaceVariant,
-										fontSize: 16,
-										fontWeight: '600',
-										opacity: 0.8,
-									}}
-								>
-									{albumName ? `${artistNames} \u2022 ${albumName}` : artistNames}
-								</Text>
-								<View style={styles.badgeRow}>
-									<View style={[styles.qualityBadge, { borderColor: `${colors.onSurfaceVariant}4D` }]}>
-										<Text
-											variant={'labelSmall'}
-											numberOfLines={1}
-											style={[styles.qualityBadgeText, { color: colors.onSurfaceVariant }]}
-										>
-											{getQualityLabel(preferredStreamQuality).toUpperCase()}
-										</Text>
-									</View>
-								</View>
-							</Animated.View>
-						</View>
-						<Animated.View
-							entering={FadeInUp.duration(240).delay(160)}
-							style={styles.trackActions}
-						>
-							<IconButton
-								icon={() => (
-									<LottieView
-										ref={lottieRef}
-										source={coloredSource}
-										style={styles.favoriteIcon}
-										autoPlay={false}
-										loop={false}
-									/>
-								)}
-								onPress={handleToggleFavorite}
-								accessibilityLabel={
-									isFavorite ? 'Remove from favorites' : 'Add to favorites'
-								}
-							/>
-							<IconButton
-								icon={() => (
-									<Icon
-										as={
-											isDownloaded
-												? CheckIcon
-												: isDownloading
-													? LoaderCircleIcon
-													: DownloadIcon
-										}
-										size={20}
-										color={
-											isDownloaded
-												? colors.primary
-												: isDownloading
-													? colors.primary
-													: colors.onSurfaceVariant
-										}
-									/>
-								)}
-								onPress={handleDownload}
-								disabled={isDownloaded || isDownloading}
-								accessibilityLabel={
-									isDownloaded
-										? 'Downloaded'
-										: isDownloading
-											? 'Downloading'
-											: 'Download track'
-								}
-							/>
-						</Animated.View>
-					</Animated.View>
-
-					{error && (
-						<View
-							style={[
-								styles.errorContainer,
-								{ backgroundColor: `${colors.error}1A` },
-							]}
-						>
-							<Text variant={'bodySmall'} style={{ color: colors.error }}>
-								{error}
+							<Text variant={'labelLarge'} style={{ color: colors.onSurfaceVariant }}>
+								Now Playing
 							</Text>
-						</View>
-					)}
+							<View style={styles.headerActions}>
+								<IconButton
+									icon={() => (
+										<Icon
+											as={ListMusic}
+											size={20}
+											color={colors.onSurfaceVariant}
+										/>
+									)}
+									onPress={openQueueSheet}
+									size={20}
+									accessibilityLabel={'Open queue'}
+								/>
+								<TrackOptionsMenu
+									track={currentTrack}
+									source={'player'}
+									orientation={'horizontal'}
+									iconColor={colors.onSurfaceVariant}
+								/>
+							</View>
+						</Animated.View>
 
-					<Animated.View
-						entering={FadeInUp.duration(320).delay(220)}
-						style={styles.controlsCard}
-					>
-						<ProgressBar seekable={true} />
-						<View style={{ height: 16 }} />
-						<PlayerControls size={'lg'} />
-					</Animated.View>
+						<Animated.View
+							entering={ZoomIn.springify().damping(16).delay(60)}
+							style={styles.artworkContainer}
+						>
+							<View
+								style={[styles.artworkWrapper, artworkLoaded && artworkShadowStyle]}
+							>
+								{artworkUrl ? (
+									<Image
+										source={{ uri: artworkUrl }}
+										style={styles.artwork}
+										contentFit={'contain'}
+										transition={300}
+										cachePolicy={'memory-disk'}
+										recyclingKey={currentTrack.id.value}
+										onLoad={handleArtworkLoad}
+									/>
+								) : (
+									<View
+										style={[
+											styles.artwork,
+											styles.artworkPlaceholder,
+											{ backgroundColor: appColors.surfaceContainerHighest },
+										]}
+									/>
+								)}
+							</View>
+						</Animated.View>
+
+						<Animated.View
+							entering={FadeInUp.duration(320).delay(120)}
+							layout={LinearTransition.springify().damping(18)}
+							style={styles.trackInfo}
+						>
+							<View style={styles.trackInfoText}>
+								<Animated.View
+									key={`track-meta-${currentTrack.id.value}`}
+									entering={FadeInUp.duration(260)}
+									exiting={FadeOut.duration(160)}
+								>
+									<Text
+										numberOfLines={2}
+										adjustsFontSizeToFit={true}
+										minimumFontScale={0.75}
+										style={{
+											color: colors.onSurface,
+											fontSize: 22,
+											fontWeight: '800',
+											letterSpacing: -0.3,
+											lineHeight: 28,
+											marginBottom: 4,
+										}}
+									>
+										{currentTrack.title}
+									</Text>
+									<Text
+										numberOfLines={1}
+										style={{
+											color: colors.onSurfaceVariant,
+											fontSize: 16,
+											fontWeight: '600',
+											opacity: 0.8,
+										}}
+									>
+										{albumName
+											? `${artistNames} \u2022 ${albumName}`
+											: artistNames}
+									</Text>
+									<View style={styles.badgeRow}>
+										<View
+											style={[
+												styles.qualityBadge,
+												{ borderColor: `${colors.onSurfaceVariant}4D` },
+											]}
+										>
+											<Text
+												variant={'labelSmall'}
+												numberOfLines={1}
+												style={[
+													styles.qualityBadgeText,
+													{ color: colors.onSurfaceVariant },
+												]}
+											>
+												{getQualityLabel(
+													preferredStreamQuality
+												).toUpperCase()}
+											</Text>
+										</View>
+									</View>
+								</Animated.View>
+							</View>
+							<Animated.View
+								entering={FadeInUp.duration(240).delay(160)}
+								style={styles.trackActions}
+							>
+								<IconButton
+									icon={() => (
+										<LottieView
+											ref={lottieRef}
+											source={coloredSource}
+											style={styles.favoriteIcon}
+											autoPlay={false}
+											loop={false}
+										/>
+									)}
+									onPress={handleToggleFavorite}
+									accessibilityLabel={
+										isFavorite ? 'Remove from favorites' : 'Add to favorites'
+									}
+								/>
+								<IconButton
+									icon={() => (
+										<Icon
+											as={
+												isDownloaded
+													? CheckIcon
+													: isDownloading
+														? LoaderCircleIcon
+														: DownloadIcon
+											}
+											size={20}
+											color={
+												isDownloaded
+													? colors.primary
+													: isDownloading
+														? colors.primary
+														: colors.onSurfaceVariant
+											}
+										/>
+									)}
+									onPress={handleDownload}
+									disabled={isDownloaded || isDownloading}
+									accessibilityLabel={
+										isDownloaded
+											? 'Downloaded'
+											: isDownloading
+												? 'Downloading'
+												: 'Download track'
+									}
+								/>
+							</Animated.View>
+						</Animated.View>
+
+						{error && (
+							<View
+								style={[
+									styles.errorContainer,
+									{ backgroundColor: `${colors.error}1A` },
+								]}
+							>
+								<Text variant={'bodySmall'} style={{ color: colors.error }}>
+									{error}
+								</Text>
+							</View>
+						)}
+
+						<Animated.View
+							entering={FadeInUp.duration(320).delay(220)}
+							style={styles.controlsCard}
+						>
+							<ProgressBar seekable={true} />
+							<View style={{ height: 16 }} />
+							<PlayerControls size={'lg'} />
+						</Animated.View>
 					</View>
 				</SafeAreaView>
 			</View>
