@@ -165,11 +165,11 @@ function TabHeader({ initialTabId }: { readonly initialTabId: TabId }) {
 				</Text>
 				<View style={styles.headerActionSpacer}>
 					{isHomeFeed && (
-						<View style={styles.brandLogoWrapper}>
+						<View style={[styles.brandLogoWrapper, { backgroundColor: colors.surfaceContainerHigh }]}>
 							<Image
 								source={require('@/assets/images/kur-logo.png')}
 								style={styles.brandLogo}
-								contentFit={'contain'}
+								contentFit={'cover'}
 							/>
 						</View>
 					)}
@@ -357,18 +357,20 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-end',
 	},
 	brandLogoWrapper: {
-		width: 36,
-		height: 36,
-		borderRadius: 18,
+		width: 42,
+		height: 42,
+		borderRadius: 12,
 		overflow: 'hidden',
-		marginRight: 8,
+		marginRight: 12,
 		justifyContent: 'center',
 		alignItems: 'center',
+		borderWidth: 1,
+		borderColor: 'rgba(255, 255, 255, 0.1)',
 	},
 	brandLogo: {
-		width: 36,
-		height: 36,
-		borderRadius: 18,
+		width: 42,
+		height: 42,
+		borderRadius: 12,
 	},
 	headerTitle: {
 		flex: 1,
