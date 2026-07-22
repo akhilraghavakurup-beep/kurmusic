@@ -6,10 +6,10 @@ const logger = getLogger('UpdateService');
 
 // The raw package.json URL on your GitHub repository (CDN cached, no rate limits)
 const REMOTE_PACKAGE_JSON_URL =
-	'https://raw.githubusercontent.com/akhilraghavakurup-beep/kur3.0/main/package.json';
+	'https://raw.githubusercontent.com/akhilraghavakurup-beep/kurmusic/main/package.json';
 
 const GITHUB_RELEASES_API_URL =
-	'https://api.github.com/repos/akhilraghavakurup-beep/kur3.0/releases/latest';
+	'https://api.github.com/repos/akhilraghavakurup-beep/kurmusic/releases/latest';
 
 // Local version of the app from package.json
 const LOCAL_VERSION = require('../../../package.json').version;
@@ -27,10 +27,10 @@ export interface UpdateInfo {
 export async function checkForUpdates(): Promise<UpdateInfo> {
 	try {
 		logger.debug(`Checking for updates... Local: ${LOCAL_VERSION}`);
-		
+
 		// Attempt to fetch GitHub Release API for latest release metadata & release notes
 		const releaseResponse = await fetch(GITHUB_RELEASES_API_URL, {
-			headers: { 'User-Agent': 'KurMusic-App', 'Accept': 'application/vnd.github.v3+json' },
+			headers: { 'User-Agent': 'KurMusic-App', Accept: 'application/vnd.github.v3+json' },
 		});
 
 		if (releaseResponse.ok) {
@@ -42,12 +42,14 @@ export async function checkForUpdates(): Promise<UpdateInfo> {
 
 			const rawVersion = releaseData.tag_name ? releaseData.tag_name.replace(/^v/, '') : '';
 			const latestVersion = rawVersion || LOCAL_VERSION;
-			const changelog = releaseData.body ? releaseData.body.trim() : 'Bug fixes and performance improvements.';
-			
+			const changelog = releaseData.body
+				? releaseData.body.trim()
+				: 'Bug fixes and performance improvements.';
+
 			const releaseAsset = releaseData.assets?.find((a) => a.name.includes('-release.apk'));
 			const downloadUrl =
 				releaseAsset?.browser_download_url ??
-				`https://github.com/akhilraghavakurup-beep/kur3.0/releases/download/v${latestVersion}/kurmusic-${latestVersion}-release.apk`;
+				`https://github.com/akhilraghavakurup-beep/kurmusic/releases/download/v${latestVersion}/kurmusic-${latestVersion}-release.apk`;
 
 			const hasUpdate = isNewerVersion(latestVersion, LOCAL_VERSION);
 
@@ -70,7 +72,7 @@ export async function checkForUpdates(): Promise<UpdateInfo> {
 		const data = (await packageResponse.json()) as { version: string };
 		const latestVersion = data.version;
 		const hasUpdate = isNewerVersion(latestVersion, LOCAL_VERSION);
-		const downloadUrl = `https://github.com/akhilraghavakurup-beep/kur3.0/releases/download/v${latestVersion}/kurmusic-${latestVersion}-release.apk`;
+		const downloadUrl = `https://github.com/akhilraghavakurup-beep/kurmusic/releases/download/v${latestVersion}/kurmusic-${latestVersion}-release.apk`;
 
 		return {
 			hasUpdate,
@@ -132,7 +134,10 @@ export async function triggerUpdateInstall(localFileUri: string): Promise<boolea
 		logger.debug(`Triggering install for: ${localFileUri}`);
 		return await installApk(localFileUri);
 	} catch (error) {
-		logger.error('Failed to launch APK installation', error instanceof Error ? error : undefined);
+		logger.error(
+			'Failed to launch APK installation',
+			error instanceof Error ? error : undefined
+		);
 		throw error;
 	}
 }
