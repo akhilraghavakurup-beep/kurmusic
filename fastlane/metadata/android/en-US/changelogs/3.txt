@@ -1,0 +1,7 @@
+Kur Music v1.1.1 (New Road to Dreams):
+• High-Res Kur Music Vector Logo & Refreshed Home Branding
+• Adaptive Main Player Artwork Scaling & Full Song Name Display
+• Smooth Polygon Splash Animation with Rounded Logo Framing
+• Fixed Settings Icon crash & Maintenance Cache Cleaner
+• Streamlined Lightweight ARM64-v8a Engine Build
+• Seamless 1-Tap In-App Updates with Progress Bar
