@@ -81,8 +81,8 @@ export function SplashNative({
 			<View style={styles.content}>
 				<Animated.View style={[styles.iconWrapper, logoStyle]}>
 					<Image
-						source={require('@/assets/images/splash-icon.png')}
-						style={{ width: ICON_SIZE, height: ICON_SIZE }}
+						source={require('@/assets/images/kur-logo.png')}
+						style={{ width: 124, height: 124, borderRadius: 24 }}
 						resizeMode={'contain'}
 					/>
 				</Animated.View>

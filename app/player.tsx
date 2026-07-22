@@ -263,13 +263,15 @@ function PlayerScreenContent() {
 								exiting={FadeOut.duration(160)}
 							>
 								<Text
-									numberOfLines={1}
-									ellipsizeMode="tail"
+									numberOfLines={2}
+									adjustsFontSizeToFit={true}
+									minimumFontScale={0.75}
 									style={{
 										color: colors.onSurface,
-										fontSize: 26,
+										fontSize: 22,
 										fontWeight: '800',
-										letterSpacing: -0.5,
+										letterSpacing: -0.3,
+										lineHeight: 28,
 										marginBottom: 4,
 									}}
 								>
@@ -448,9 +450,15 @@ const styles = StyleSheet.create({
 	artworkContainer: {
 		flex: 1,
 		width: '100%',
+		maxHeight: '44%',
 		justifyContent: 'center',
+		alignItems: 'center',
+		marginVertical: 8,
 	},
 	artworkWrapper: {
+		width: '88%',
+		maxWidth: 320,
+		aspectRatio: 1,
 		borderRadius: 24,
 		overflow: 'hidden',
 		borderWidth: 1,
@@ -465,6 +473,7 @@ const styles = StyleSheet.create({
 	},
 	artwork: {
 		width: '100%',
+		height: '100%',
 		aspectRatio: 1,
 		borderRadius: 24,
 	},
