@@ -1,0 +1,1144 @@
+diff --git a/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt b/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt
+index b2409a0..04e6802 100644
+--- a/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt
++++ b/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/module/MusicModule.kt
+@@ -38,6 +38,19 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+     private lateinit var musicService: MusicService
+     private val context = reactContext
+ 
++    companion object {
++        @Volatile
++        private var reactContextRef: java.lang.ref.WeakReference<com.facebook.react.bridge.ReactContext>? = null
++
++        fun getReactContext(): com.facebook.react.bridge.ReactContext? {
++            return reactContextRef?.get()
++        }
++
++        fun setReactContext(context: com.facebook.react.bridge.ReactContext?) {
++            reactContextRef = context?.let { java.lang.ref.WeakReference(it) }
++        }
++    }
++
+     @Nonnull
+     override fun getName(): String {
+         return "TrackPlayerModule"
+@@ -46,6 +59,7 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+     override fun initialize() {
+         Timber.plant(Timber.DebugTree())
+         AppForegroundTracker.start()
++        setReactContext(reactApplicationContext)
+     }
+ 
+     override fun onServiceConnected(name: ComponentName, service: IBinder) {
+@@ -134,6 +148,7 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+             this["CAPABILITY_SET_RATING"] = Capability.SET_RATING.ordinal
+             this["CAPABILITY_JUMP_FORWARD"] = Capability.JUMP_FORWARD.ordinal
+             this["CAPABILITY_JUMP_BACKWARD"] = Capability.JUMP_BACKWARD.ordinal
++            this["CAPABILITY_BROWSE"] = 100
+ 
+             // States
+             this["STATE_NONE"] = State.None.state
+@@ -251,7 +266,7 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+     }
+ 
+     @ReactMethod
+-    fun updateOptions(data: ReadableMap?, callback: Promise) = scope.launch {
++    fun updateOptions(data: ReadableMap?, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         val options = Arguments.toBundle(data)
+@@ -261,10 +276,10 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+         }
+ 
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun add(data: ReadableArray?, insertBeforeIndex: Int, callback: Promise) = scope.launch {
++    fun add(data: ReadableArray?, insertBeforeIndex: Int, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         try {
+@@ -282,10 +297,10 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+         } catch (exception: Exception) {
+             rejectWithException(callback, exception)
+         }
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun load(data: ReadableMap?, callback: Promise) = scope.launch {
++    fun load(data: ReadableMap?, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+         if (data == null) {
+             callback.resolve(null)
+@@ -298,17 +313,17 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+         } else {
+             callback.reject("invalid_track_object", "Track was not a dictionary type")
+         }
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun move(fromIndex: Int, toIndex: Int, callback: Promise) = scope.launch {
++    fun move(fromIndex: Int, toIndex: Int, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+         musicService.move(fromIndex, toIndex)
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun remove(data: ReadableArray?, callback: Promise) = scope.launch {
++    fun remove(data: ReadableArray?, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+         val inputIndexes = Arguments.toList(data)
+         if (inputIndexes != null) {
+@@ -328,10 +343,10 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+             musicService.remove(indexes)
+         }
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun updateMetadataForTrack(index: Int, map: ReadableMap?, callback: Promise) =
++    fun updateMetadataForTrack(index: Int, map: ReadableMap?, callback: Promise) {
+         scope.launch {
+             if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+@@ -345,10 +360,10 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+ 
+                 callback.resolve(null)
+             }
+-        }
++        } }
+ 
+     @ReactMethod
+-    fun updateNowPlayingMetadata(map: ReadableMap?, callback: Promise) = scope.launch {
++    fun updateNowPlayingMetadata(map: ReadableMap?, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         if (musicService.tracks.isEmpty())
+@@ -361,10 +376,10 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+         }
+ 
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun clearNowPlayingMetadata(callback: Promise) = scope.launch {
++    fun clearNowPlayingMetadata(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         if (musicService.tracks.isEmpty())
+@@ -372,18 +387,18 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+ 
+         musicService.clearNotificationMetadata()
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun removeUpcomingTracks(callback: Promise) = scope.launch {
++    fun removeUpcomingTracks(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.removeUpcomingTracks()
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun skip(index: Int, initialTime: Float, callback: Promise) = scope.launch {
++    fun skip(index: Int, initialTime: Float, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.skip(index)
+@@ -393,10 +408,10 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+         }
+ 
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun skipToNext(initialTime: Float, callback: Promise) = scope.launch {
++    fun skipToNext(initialTime: Float, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.skipToNext()
+@@ -406,10 +421,10 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+         }
+ 
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun skipToPrevious(initialTime: Float, callback: Promise) = scope.launch {
++    fun skipToPrevious(initialTime: Float, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.skipToPrevious()
+@@ -419,10 +434,10 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+         }
+ 
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun reset(callback: Promise) = scope.launch {
++    fun reset(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.stop()
+@@ -430,136 +445,136 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+         musicService.clear()
+ 
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun play(callback: Promise) = scope.launch {
++    fun play(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.play()
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun pause(callback: Promise) = scope.launch {
++    fun pause(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.pause()
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun stop(callback: Promise) = scope.launch {
++    fun stop(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.stop()
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun seekTo(seconds: Float, callback: Promise) = scope.launch {
++    fun seekTo(seconds: Float, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.seekTo(seconds)
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun seekBy(offset: Float, callback: Promise) = scope.launch {
++    fun seekBy(offset: Float, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.seekBy(offset)
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun retry(callback: Promise) = scope.launch {
++    fun retry(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.retry()
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun setVolume(volume: Float, callback: Promise) = scope.launch {
++    fun setVolume(volume: Float, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.setVolume(volume)
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getVolume(callback: Promise) = scope.launch {
++    fun getVolume(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         callback.resolve(musicService.getVolume())
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun setRate(rate: Float, callback: Promise) = scope.launch {
++    fun setRate(rate: Float, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.setRate(rate)
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getRate(callback: Promise) = scope.launch {
++    fun getRate(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         callback.resolve(musicService.getRate())
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun setRepeatMode(mode: Int, callback: Promise) = scope.launch {
++    fun setRepeatMode(mode: Int, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.setRepeatMode(RepeatMode.fromOrdinal(mode))
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getRepeatMode(callback: Promise) = scope.launch {
++    fun getRepeatMode(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         callback.resolve(musicService.getRepeatMode().ordinal)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun setPlayWhenReady(playWhenReady: Boolean, callback: Promise) = scope.launch {
++    fun setPlayWhenReady(playWhenReady: Boolean, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         musicService.playWhenReady = playWhenReady
+         callback.resolve(null)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getPlayWhenReady(callback: Promise) = scope.launch {
++    fun getPlayWhenReady(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         callback.resolve(musicService.playWhenReady)
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getTrack(index: Int, callback: Promise) = scope.launch {
++    fun getTrack(index: Int, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         if (index >= 0 && index < musicService.tracks.size) {
+-            callback.resolve(Arguments.fromBundle(musicService.tracks[index].originalItem))
++            callback.resolve(Arguments.fromBundle(musicService.tracks[index].originalItem ?: Bundle()))
+         } else {
+             callback.resolve(null)
+         }
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getQueue(callback: Promise) = scope.launch {
++    fun getQueue(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         callback.resolve(Arguments.fromList(musicService.tracks.map { it.originalItem }))
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun setQueue(data: ReadableArray?, callback: Promise) = scope.launch {
++    fun setQueue(data: ReadableArray?, callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         try {
+@@ -569,61 +584,68 @@ class MusicModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
+         } catch (exception: Exception) {
+             rejectWithException(callback, exception)
+         }
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getActiveTrackIndex(callback: Promise) = scope.launch {
++    fun getActiveTrackIndex(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+         callback.resolve(
+             if (musicService.tracks.isEmpty()) null else musicService.getCurrentTrackIndex()
+         )
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getActiveTrack(callback: Promise) = scope.launch {
++    fun getActiveTrack(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+         callback.resolve(
+             if (musicService.tracks.isEmpty()) null
+             else Arguments.fromBundle(
+-                musicService.tracks[musicService.getCurrentTrackIndex()].originalItem
++                musicService.tracks[musicService.getCurrentTrackIndex()].originalItem ?: Bundle()
+             )
+         )
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getDuration(callback: Promise) = scope.launch {
++    fun getDuration(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         callback.resolve(musicService.getDurationInSeconds())
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getBufferedPosition(callback: Promise) = scope.launch {
++    fun getBufferedPosition(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         callback.resolve(musicService.getBufferedPositionInSeconds())
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getPosition(callback: Promise) = scope.launch {
++    fun getPosition(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+ 
+         callback.resolve(musicService.getPositionInSeconds())
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getProgress(callback: Promise) = scope.launch {
++    fun getProgress(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+         var bundle = Bundle()
+         bundle.putDouble("duration", musicService.getDurationInSeconds());
+         bundle.putDouble("position", musicService.getPositionInSeconds());
+         bundle.putDouble("buffered", musicService.getBufferedPositionInSeconds());
+         callback.resolve(Arguments.fromBundle(bundle))
+-    }
++    } }
+ 
+     @ReactMethod
+-    fun getPlaybackState(callback: Promise) = scope.launch {
++    fun getPlaybackState(callback: Promise) { scope.launch {
+         if (verifyServiceBoundOrReject(callback)) return@launch
+         callback.resolve(Arguments.fromBundle(musicService.getPlayerStateBundle(musicService.state)))
++    } }
++
++    @ReactMethod
++    fun setBrowseResults(parentId: String, items: ReadableArray) {
++        val list = Arguments.toList(items) ?: return
++        @Suppress("UNCHECKED_CAST")
++        musicService.sendBrowseResult(parentId, list as List<Bundle>)
+     }
+ }
+diff --git a/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt b/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
+index afa6b0f..bd17800 100644
+--- a/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
++++ b/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
+@@ -10,6 +10,11 @@ import android.os.Build
+ import android.os.Bundle
+ import android.os.IBinder
+ import android.support.v4.media.RatingCompat
++import android.support.v4.media.MediaBrowserCompat
++import android.support.v4.media.MediaDescriptionCompat
++import android.bluetooth.BluetoothDevice
++import android.content.IntentFilter
++import android.support.v4.media.session.MediaSessionCompat
+ import androidx.annotation.MainThread
+ import androidx.core.app.NotificationCompat
+ import androidx.core.app.NotificationCompat.PRIORITY_LOW
+@@ -30,22 +35,91 @@ import com.doublesymmetry.trackplayer.module.MusicEvents.Companion.METADATA_PAYL
+ import com.doublesymmetry.trackplayer.utils.BundleUtils
+ import com.doublesymmetry.trackplayer.utils.BundleUtils.setRating
+ import com.facebook.react.HeadlessJsTaskService
++import com.facebook.react.ReactApplication
++import com.facebook.react.ReactHost
++import com.facebook.react.ReactInstanceEventListener
++import com.facebook.react.bridge.ReactContext
+ import com.facebook.react.bridge.Arguments
++import com.facebook.react.bridge.UiThreadUtil
++import com.facebook.react.internal.featureflags.ReactNativeNewArchitectureFeatureFlags
+ import com.facebook.react.jstasks.HeadlessJsTaskConfig
++import com.facebook.react.jstasks.HeadlessJsTaskContext
++import com.facebook.react.jstasks.HeadlessJsTaskEventListener
+ import com.facebook.react.modules.core.DeviceEventManagerModule
+ import com.google.android.exoplayer2.ui.R as ExoPlayerR
+ import kotlinx.coroutines.*
+ import kotlinx.coroutines.flow.flow
+ import java.util.concurrent.TimeUnit
++import java.util.concurrent.CopyOnWriteArraySet
+ import kotlin.system.exitProcess
++import android.support.v4.media.session.PlaybackStateCompat
++import androidx.media.MediaBrowserServiceCompat
+ import timber.log.Timber
+ 
+ @MainThread
+-class MusicService : HeadlessJsTaskService() {
++class MusicService : MediaBrowserServiceCompat(), HeadlessJsTaskEventListener {
+     private lateinit var player: QueuedAudioPlayer
+     private val binder = MusicBinder()
+     private val scope = MainScope()
+     private var progressUpdateJob: Job? = null
++    private val browseResults = mutableMapOf<String, Result<MutableList<MediaBrowserCompat.MediaItem>>>()
++    private val activeTasks: MutableSet<Int> = CopyOnWriteArraySet()
++    private var headlessTaskRequested = false
++
++    private val reactNativeHost
++        get() = (application as ReactApplication).reactNativeHost
++
++    private val reactHost: ReactHost?
++        get() = (application as ReactApplication).reactHost
++
++    private val reactContext: ReactContext?
++        get() {
++            if (ReactNativeNewArchitectureFeatureFlags.enableBridgelessArchitecture()) {
++                return reactHost?.currentReactContext
++            }
++            return reactNativeHost.reactInstanceManager.currentReactContext
++        }
++
++    private val receiver = object : android.content.BroadcastReceiver() {
++        override fun onReceive(context: android.content.Context, intent: android.content.Intent) {
++            when (intent.action) {
++                BluetoothDevice.ACTION_ACL_CONNECTED -> {
++                    val bundle = Bundle()
++                    bundle.putString("device", "bluetooth")
++                    emit("remote-active", bundle)
++                }
++                android.content.Intent.ACTION_HEADSET_PLUG -> {
++                    val state = intent.getIntExtra("state", -1)
++                    if (state == 1) {
++                        val bundle = Bundle()
++                        bundle.putString("device", "headset")
++                        emit("remote-active", bundle)
++                    }
++                }
++            }
++        }
++    }
++
++    override fun onCreate() {
++        super.onCreate()
++        val filter = IntentFilter()
++        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
++        filter.addAction(android.content.Intent.ACTION_HEADSET_PLUG)
++        registerReceiver(receiver, filter)
++    }
++
++    override fun onDestroy() {
++        super.onDestroy()
++        unregisterReceiver(receiver)
++        reactContext?.let { context ->
++            HeadlessJsTaskContext.getInstance(context).removeTaskEventListener(this)
++        }
++        if (::player.isInitialized) {
++            player.destroy()
++        }
++
++        progressUpdateJob?.cancel()
++    }
+ 
+     /**
+      * Use [appKilledPlaybackBehavior] instead.
+@@ -94,7 +168,10 @@ class MusicService : HeadlessJsTaskService() {
+     private var compactCapabilities: List<Capability> = emptyList()
+ 
+     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+-        startTask(getTaskConfig(intent))
++        val taskConfig = getTaskConfig(intent)
++        if (taskConfig != null) {
++            startTask(taskConfig)
++        }
+         startAndStopEmptyNotificationToAvoidANR()
+         return START_STICKY
+     }
+@@ -157,6 +234,83 @@ class MusicService : HeadlessJsTaskService() {
+         val automaticallyUpdateNotificationMetadata = playerOptions?.getBoolean(AUTO_UPDATE_METADATA, true) ?: true
+ 
+         player = QueuedAudioPlayer(this@MusicService, playerConfig, bufferConfig, cacheConfig)
++        
++        // Resolve private mediaSession from BaseAudioPlayer via reflection
++        val mediaSession = try {
++            var clazz: Class<*>? = player.javaClass
++            var session: MediaSessionCompat? = null
++            while (clazz != null) {
++                try {
++                    val field = clazz.getDeclaredField("mediaSession")
++                    field.isAccessible = true
++                    session = field.get(player) as? MediaSessionCompat
++                    break
++                } catch (e: NoSuchFieldException) {
++                    clazz = clazz.superclass
++                }
++            }
++            session
++        } catch (e: Exception) {
++            null
++        }
++
++        if (mediaSession != null) {
++            // Expose the session token to Android Auto
++            sessionToken = mediaSession.sessionToken
++
++            // Wrap the MediaSession callback to intercept Android Auto play requests
++            try {
++                val implField = mediaSession.javaClass.getDeclaredField("mImpl")
++                implField.isAccessible = true
++                val impl = implField.get(mediaSession)
++                val callbackField = impl.javaClass.getDeclaredField("mCallback")
++                callbackField.isAccessible = true
++                val originalCallback = callbackField.get(impl) as? MediaSessionCompat.Callback
++                
++                mediaSession.setCallback(object : MediaSessionCompat.Callback() {
++                    override fun onPlayFromMediaId(mediaId: String?, extras: Bundle?) {
++                        if (playAndroidAutoNativeMediaId(mediaId)) return
++                        emitAndroidAutoPlayId(mediaId)
++                    }
++
++                    override fun onPlay() { originalCallback?.onPlay() }
++                    override fun onPause() { originalCallback?.onPause() }
++                    override fun onSkipToNext() { emit(MusicEvents.BUTTON_SKIP_NEXT) }
++                    override fun onSkipToPrevious() { emit(MusicEvents.BUTTON_SKIP_PREVIOUS) }
++                    override fun onFastForward() { originalCallback?.onFastForward() }
++                    override fun onRewind() { originalCallback?.onRewind() }
++                    override fun onStop() { originalCallback?.onStop() }
++                    override fun onSeekTo(pos: Long) { originalCallback?.onSeekTo(pos) }
++                    override fun onSetRating(rating: RatingCompat?) { originalCallback?.onSetRating(rating) }
++                    override fun onSetRating(rating: RatingCompat?, extras: Bundle?) { originalCallback?.onSetRating(rating, extras) }
++                    override fun onCustomAction(action: String?, extras: Bundle?) { originalCallback?.onCustomAction(action, extras) }
++                    override fun onCommand(command: String?, extras: Bundle?, cb: android.os.ResultReceiver?) { originalCallback?.onCommand(command, extras, cb) }
++                    override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
++                        return originalCallback?.onMediaButtonEvent(mediaButtonEvent) ?: super.onMediaButtonEvent(mediaButtonEvent)
++                    }
++                    override fun onPlayFromSearch(query: String?, extras: Bundle?) { originalCallback?.onPlayFromSearch(query, extras) }
++                    override fun onPlayFromUri(uri: Uri?, extras: Bundle?) { originalCallback?.onPlayFromUri(uri, extras) }
++                    override fun onSkipToQueueItem(id: Long) {
++                        if (playAndroidAutoNativeQueueIndex(id.toInt())) return
++                        originalCallback?.onSkipToQueueItem(id)
++                    }
++                    override fun onPrepare() { originalCallback?.onPrepare() }
++                    override fun onPrepareFromMediaId(mediaId: String?, extras: Bundle?) {
++                        if (playAndroidAutoNativeMediaId(mediaId)) return
++                        emitAndroidAutoPlayId(mediaId)
++                    }
++                    override fun onPrepareFromSearch(query: String?, extras: Bundle?) { originalCallback?.onPrepareFromSearch(query, extras) }
++                    override fun onPrepareFromUri(uri: Uri?, extras: Bundle?) { originalCallback?.onPrepareFromUri(uri, extras) }
++                    override fun onSetPlaybackSpeed(speed: Float) { originalCallback?.onSetPlaybackSpeed(speed) }
++                    override fun onSetCaptioningEnabled(enabled: Boolean) { originalCallback?.onSetCaptioningEnabled(enabled) }
++                    override fun onSetRepeatMode(repeatMode: Int) { originalCallback?.onSetRepeatMode(repeatMode) }
++                    override fun onSetShuffleMode(shuffleMode: Int) { originalCallback?.onSetShuffleMode(shuffleMode) }
++                })
++            } catch (e: Exception) {
++                Timber.e(e, "Failed to wrap MediaSession callback for Android Auto")
++            }
++        }
++
+         player.automaticallyUpdateNotificationMetadata = automaticallyUpdateNotificationMetadata
+         observeEvents()
+         setupForegrounding()
+@@ -292,22 +446,26 @@ class MusicService : HeadlessJsTaskService() {
+     fun add(tracks: List<Track>) {
+         val items = tracks.map { it.toAudioItem() }
+         player.add(items)
++        notifyAndroidAutoBrowseTreeChanged()
+     }
+ 
+     @MainThread
+     fun add(tracks: List<Track>, atIndex: Int) {
+         val items = tracks.map { it.toAudioItem() }
+         player.add(items, atIndex)
++        notifyAndroidAutoBrowseTreeChanged()
+     }
+ 
+     @MainThread
+     fun load(track: Track) {
+         player.load(track.toAudioItem())
++        notifyAndroidAutoBrowseTreeChanged()
+     }
+ 
+     @MainThread
+     fun move(fromIndex: Int, toIndex: Int) {
+         player.move(fromIndex, toIndex);
++        notifyAndroidAutoBrowseTreeChanged()
+     }
+ 
+     @MainThread
+@@ -318,11 +476,13 @@ class MusicService : HeadlessJsTaskService() {
+     @MainThread
+     fun remove(indexes: List<Int>) {
+         player.remove(indexes)
++        notifyAndroidAutoBrowseTreeChanged()
+     }
+ 
+     @MainThread
+     fun clear() {
+         player.clear()
++        notifyAndroidAutoBrowseTreeChanged()
+     }
+ 
+     @MainThread
+@@ -353,6 +513,7 @@ class MusicService : HeadlessJsTaskService() {
+     @MainThread
+     fun skip(index: Int) {
+         player.jumpToItem(index)
++        notifyAndroidAutoBrowseTreeChanged()
+     }
+ 
+     @MainThread
+@@ -739,11 +900,32 @@ class MusicService : HeadlessJsTaskService() {
+         return bundle
+     }
+ 
++    private fun resolveReactContext(): ReactContext? {
++        return reactContext ?: com.doublesymmetry.trackplayer.module.MusicModule.getReactContext()
++    }
++
++    @MainThread
++    private fun emitToReactContext(context: ReactContext, event: String, data: Bundle? = null) {
++        context
++            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
++            .emit(event, data?.let { Arguments.fromBundle(it) })
++    }
++
+     @MainThread
+     private fun emit(event: String, data: Bundle? = null) {
+-        reactNativeHost.reactInstanceManager.currentReactContext
+-            ?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+-            ?.emit(event, data?.let { Arguments.fromBundle(it) })
++        val context = resolveReactContext()
++        if (context != null) {
++            emitToReactContext(context, event, data)
++            return
++        }
++
++        ensureHeadlessJsTask()
++        runWhenReactContextReady { readyContext ->
++            scope.launch {
++                delay(REACT_EVENT_REPLAY_DELAY_MS)
++                emitToReactContext(readyContext, event, data)
++            }
++        }
+     }
+ 
+     @MainThread
+@@ -751,62 +933,328 @@ class MusicService : HeadlessJsTaskService() {
+         val payload = Arguments.createArray()
+         data.forEach { payload.pushMap(Arguments.fromBundle(it)) }
+ 
+-        reactNativeHost.reactInstanceManager.currentReactContext
+-            ?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+-            ?.emit(event, payload)
++        val context = resolveReactContext()
++        if (context != null) {
++            context
++                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
++                .emit(event, payload)
++            return
++        }
++
++        ensureHeadlessJsTask()
++        runWhenReactContextReady { readyContext ->
++            scope.launch {
++                delay(REACT_EVENT_REPLAY_DELAY_MS)
++                readyContext
++                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
++                    .emit(event, payload)
++            }
++        }
+     }
+ 
+-    override fun getTaskConfig(intent: Intent?): HeadlessJsTaskConfig {
++    @MainThread
++    override fun onBind(intent: Intent): IBinder? {
++        if (SERVICE_INTERFACE == intent.action) {
++            return super.onBind(intent)
++        }
++        return binder
++    }
++
++    override fun onHeadlessJsTaskStart(taskId: Int) {
++        // No-op. The media browser service owns its own lifetime.
++    }
++
++    override fun onHeadlessJsTaskFinish(taskId: Int) {
++        activeTasks.remove(taskId)
++        // Keep the media browser service alive while Android Auto is connected.
++    }
++
++        fun getTaskConfig(intent: Intent?): HeadlessJsTaskConfig? {
+         return HeadlessJsTaskConfig(TASK_KEY, Arguments.createMap(), 0, true)
+     }
+ 
+     @MainThread
+-    override fun onBind(intent: Intent): IBinder {
+-        return binder
++    private fun emitAndroidAutoPlayId(mediaId: String?) {
++        val bundle = Bundle()
++        bundle.putString("mediaId", mediaId)
++        emit("remote-play-id", bundle)
+     }
+ 
+     @MainThread
+-    override fun onTaskRemoved(rootIntent: Intent?) {
+-        super.onTaskRemoved(rootIntent)
++    private fun playAndroidAutoNativeMediaId(mediaId: String?): Boolean {
++        if (mediaId == null || !mediaId.startsWith(TRACK_ID_PREFIX)) return false
++        val index = mediaId.removePrefix(TRACK_ID_PREFIX).toIntOrNull() ?: return false
++        return playAndroidAutoNativeQueueIndex(index)
++    }
+ 
+-        if (!::player.isInitialized) return
++    @MainThread
++    private fun playAndroidAutoNativeQueueIndex(index: Int): Boolean {
++        if (!::player.isInitialized || index !in tracks.indices) return false
++        player.jumpToItem(index)
++        player.play()
++        notifyAndroidAutoBrowseTreeChanged()
++        return true
++    }
+ 
+-        when (appKilledPlaybackBehavior) {
+-            AppKilledPlaybackBehavior.PAUSE_PLAYBACK -> player.pause()
+-            AppKilledPlaybackBehavior.STOP_PLAYBACK_AND_REMOVE_NOTIFICATION -> {
+-                player.clear()
+-                player.stop()
++    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): BrowserRoot? {
++        ensureHeadlessJsTask()
++        return BrowserRoot("root", null)
++    }
+ 
+-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+-                    stopForeground(STOP_FOREGROUND_REMOVE)
+-                } else {
+-                    @Suppress("DEPRECATION")
+-                    stopForeground(true)
+-                }
++    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
++        ensureHeadlessJsTask()
++        result.detach()
++        browseResults[parentId] = result
++        val bundle = Bundle()
++        bundle.putString("parentId", parentId)
++        emit("remote-browse", bundle)
++        scope.launch {
++            delay(BROWSE_RESULT_TIMEOUT_MS)
++            val pendingResult = browseResults.remove(parentId) ?: return@launch
++            pendingResult.sendResult(buildAndroidAutoBrowseItems(parentId))
++        }
++    }
+ 
+-                stopSelf()
+-                exitProcess(0)
++    fun sendBrowseResult(parentId: String, items: List<Bundle>) {
++        val result = browseResults.remove(parentId) ?: return
++        val mediaItems = items.map {
++            val extras = Bundle()
++            if (it.containsKey("gridBrowsable") && it.getBoolean("gridBrowsable")) {
++                extras.putInt("android.media.browse.CONTENT_STYLE_BROWSABLE_HINT", 2)
++                extras.putInt("android.media.extras.CONTENT_STYLE_BROWSABLE_HINT", 2)
++            }
++            if (it.containsKey("gridPlayable") && it.getBoolean("gridPlayable")) {
++                extras.putInt("android.media.browse.CONTENT_STYLE_PLAYABLE_HINT", 2)
++                extras.putInt("android.media.extras.CONTENT_STYLE_PLAYABLE_HINT", 2)
+             }
+-            else -> {}
++            val description = MediaDescriptionCompat.Builder()
++                .setMediaId(it.getString("id"))
++                .setTitle(it.getString("title"))
++                .setSubtitle(it.getString("subtitle"))
++                .setIconUri(it.getString("iconUri")?.let { uriStr -> android.net.Uri.parse(uriStr) })
++                .setExtras(extras)
++                .build()
++            val flags = if (it.getBoolean("browsable", false)) MediaBrowserCompat.MediaItem.FLAG_BROWSABLE else MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
++            MediaBrowserCompat.MediaItem(description, flags)
++        }.toMutableList()
++        result.sendResult(mediaItems)
++    }
++
++    private fun buildAndroidAutoBrowseItems(parentId: String): MutableList<MediaBrowserCompat.MediaItem> {
++        return when (parentId) {
++            ROOT_ID -> buildAndroidAutoRootItems()
++            QUEUE_ID -> buildAndroidAutoQueueItems()
++            else -> buildAndroidAutoUnavailableItems()
+         }
+     }
+ 
+-    @MainThread
+-    override fun onHeadlessJsTaskFinish(taskId: Int) {
+-        // This is empty so ReactNative doesn't kill this service
++    private fun buildAndroidAutoRootItems(): MutableList<MediaBrowserCompat.MediaItem> {
++        val items = mutableListOf<MediaBrowserCompat.MediaItem>()
++        val queue = safeAndroidAutoTracks()
++
++        if (queue.isEmpty()) {
++            items.add(
++                androidAutoMediaItem(
++                    OPEN_APP_ID,
++                    "Open Kur Music",
++                    "Choose music on your phone to start Android Auto playback",
++                    browsable = true
++                )
++            )
++            return items
++        }
++
++        currentAndroidAutoTrack(queue)?.let { (index, track) ->
++            items.add(androidAutoTrackItem(index, track, "Now Playing"))
++        }
++
++        items.add(
++            androidAutoMediaItem(
++                QUEUE_ID,
++                "Playing Queue",
++                "${queue.size} track${if (queue.size == 1) "" else "s"} ready",
++                browsable = true
++            )
++        )
++
++        queue.take(ROOT_TRACK_PREVIEW_LIMIT).forEachIndexed { index, track ->
++            items.add(androidAutoTrackItem(index, track))
++        }
++
++        return items
+     }
+ 
+-    @MainThread
+-    override fun onDestroy() {
+-        super.onDestroy()
+-        if (::player.isInitialized) {
+-            player.destroy()
++    private fun buildAndroidAutoQueueItems(): MutableList<MediaBrowserCompat.MediaItem> {
++        val queue = safeAndroidAutoTracks()
++        if (queue.isEmpty()) {
++            return mutableListOf(
++                androidAutoMediaItem(
++                    EMPTY_QUEUE_ID,
++                    "No music queued",
++                    "Start playback in Kur Music first",
++                    browsable = true
++                )
++            )
+         }
+ 
+-        progressUpdateJob?.cancel()
++        return queue.mapIndexed { index, track -> androidAutoTrackItem(index, track) }.toMutableList()
++    }
++
++    private fun buildAndroidAutoUnavailableItems(): MutableList<MediaBrowserCompat.MediaItem> {
++        return mutableListOf(
++            androidAutoMediaItem(
++                OPEN_APP_ID,
++                "Open Kur Music",
++                "Start the app on your phone to load this section",
++                browsable = true
++            )
++        )
++    }
++
++    private fun safeAndroidAutoTracks(): List<Track> {
++        return if (::player.isInitialized) tracks else emptyList()
++    }
++
++    private fun currentAndroidAutoTrack(queue: List<Track>): Pair<Int, Track>? {
++        if (!::player.isInitialized) return null
++        val currentIndex = player.currentIndex
++        if (currentIndex !in queue.indices) return null
++        return currentIndex to queue[currentIndex]
++    }
++
++    private fun androidAutoTrackItem(
++        index: Int,
++        track: Track,
++        fallbackSubtitle: String? = null
++    ): MediaBrowserCompat.MediaItem {
++        val title = track.title?.takeIf { it.isNotBlank() } ?: "Unknown track"
++        val subtitle = track.artist?.takeIf { it.isNotBlank() } ?: fallbackSubtitle ?: "Kur Music"
++        return androidAutoMediaItem(
++            "$TRACK_ID_PREFIX$index",
++            title,
++            subtitle,
++            browsable = false,
++            iconUri = track.artwork
++        )
++    }
++
++    private fun androidAutoMediaItem(
++        id: String,
++        title: String,
++        subtitle: String,
++        browsable: Boolean,
++        iconUri: Uri? = null
++    ): MediaBrowserCompat.MediaItem {
++        val description = MediaDescriptionCompat.Builder()
++            .setMediaId(id)
++            .setTitle(title)
++            .setSubtitle(subtitle)
++            .setIconUri(iconUri)
++            .build()
++        val flags = if (browsable) {
++            MediaBrowserCompat.MediaItem.FLAG_BROWSABLE
++        } else {
++            MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
++        }
++        return MediaBrowserCompat.MediaItem(description, flags)
++    }
++
++    private fun notifyAndroidAutoBrowseTreeChanged() {
++        notifyChildrenChanged(ROOT_ID)
++        notifyChildrenChanged(QUEUE_ID)
++    }
++
++    private fun ensureHeadlessJsTask() {
++        if (headlessTaskRequested && resolveReactContext() != null) return
++        val taskConfig = getTaskConfig(null) ?: return
++        startTask(taskConfig)
++    }
++
++    private fun startTask(taskConfig: HeadlessJsTaskConfig) {
++        if (headlessTaskRequested && resolveReactContext() != null) return
++        headlessTaskRequested = true
++
++        UiThreadUtil.runOnUiThread {
++            val context = resolveReactContext()
++            if (context == null) {
++                createReactContextAndScheduleTask(taskConfig)
++            } else {
++                invokeStartTask(context, taskConfig)
++            }
++        }
++    }
++
++    private fun invokeStartTask(context: ReactContext, taskConfig: HeadlessJsTaskConfig) {
++        val headlessJsTaskContext = HeadlessJsTaskContext.getInstance(context)
++        headlessJsTaskContext.addTaskEventListener(this)
++        val taskId = headlessJsTaskContext.startTask(taskConfig)
++        activeTasks.add(taskId)
++    }
++
++    private fun createReactContextAndScheduleTask(taskConfig: HeadlessJsTaskConfig) {
++        if (ReactNativeNewArchitectureFeatureFlags.enableBridgelessArchitecture()) {
++            val host = reactHost ?: return
++            host.addReactInstanceEventListener(
++                object : ReactInstanceEventListener {
++                    override fun onReactContextInitialized(context: ReactContext) {
++                        invokeStartTask(context, taskConfig)
++                        host.removeReactInstanceEventListener(this)
++                    }
++                }
++            )
++            host.start()
++            return
++        }
++
++        val manager = reactNativeHost.reactInstanceManager
++        manager.addReactInstanceEventListener(
++            object : ReactInstanceEventListener {
++                override fun onReactContextInitialized(context: ReactContext) {
++                    invokeStartTask(context, taskConfig)
++                    manager.removeReactInstanceEventListener(this)
++                }
++            }
++        )
++        manager.createReactContextInBackground()
++    }
++
++    private fun runWhenReactContextReady(action: (ReactContext) -> Unit) {
++        val context = resolveReactContext()
++        if (context != null) {
++            action(context)
++            return
++        }
++
++        if (ReactNativeNewArchitectureFeatureFlags.enableBridgelessArchitecture()) {
++            val host = reactHost ?: return
++            host.addReactInstanceEventListener(
++                object : ReactInstanceEventListener {
++                    override fun onReactContextInitialized(context: ReactContext) {
++                        action(context)
++                        host.removeReactInstanceEventListener(this)
++                    }
++                }
++            )
++            if (!headlessTaskRequested) {
++                host.start()
++            }
++            return
++        }
++
++        val manager = reactNativeHost.reactInstanceManager
++        manager.addReactInstanceEventListener(
++            object : ReactInstanceEventListener {
++                override fun onReactContextInitialized(context: ReactContext) {
++                    action(context)
++                    manager.removeReactInstanceEventListener(this)
++                }
++            }
++        )
++        if (!headlessTaskRequested) {
++            manager.createReactContextInBackground()
++        }
+     }
+ 
+-    @MainThread
+     inner class MusicBinder : Binder() {
+         val service = this@MusicService
+     }
+@@ -825,6 +1273,15 @@ class MusicService : HeadlessJsTaskService() {
+ 
+         const val TASK_KEY = "TrackPlayer"
+ 
++        const val ROOT_ID = "root"
++        const val QUEUE_ID = "queue"
++        const val OPEN_APP_ID = "android_auto_open_app"
++        const val EMPTY_QUEUE_ID = "android_auto_empty_queue"
++        const val TRACK_ID_PREFIX = "android_auto_native_track:"
++        const val ROOT_TRACK_PREVIEW_LIMIT = 6
++        const val BROWSE_RESULT_TIMEOUT_MS = 5000L
++        const val REACT_EVENT_REPLAY_DELAY_MS = 350L
++
+         const val MIN_BUFFER_KEY = "minBuffer"
+         const val MAX_BUFFER_KEY = "maxBuffer"
+         const val PLAY_BUFFER_KEY = "playBuffer"
+diff --git a/node_modules/react-native-track-player/lib/src/constants/Capability.d.ts b/node_modules/react-native-track-player/lib/src/constants/Capability.d.ts
+index dc91e09..2a54eea 100644
+--- a/node_modules/react-native-track-player/lib/src/constants/Capability.d.ts
++++ b/node_modules/react-native-track-player/lib/src/constants/Capability.d.ts
+@@ -13,5 +13,6 @@ export declare enum Capability {
+     SetRating,
+     Like,
+     Dislike,
+-    Bookmark
++    Bookmark,
++    Browse
+ }
+diff --git a/node_modules/react-native-track-player/lib/src/constants/Capability.js b/node_modules/react-native-track-player/lib/src/constants/Capability.js
+index cf92d7b..c952bf0 100644
+--- a/node_modules/react-native-track-player/lib/src/constants/Capability.js
++++ b/node_modules/react-native-track-player/lib/src/constants/Capability.js
+@@ -16,4 +16,5 @@ export var Capability;
+     Capability[Capability["Like"] = TrackPlayer.CAPABILITY_LIKE] = "Like";
+     Capability[Capability["Dislike"] = TrackPlayer.CAPABILITY_DISLIKE] = "Dislike";
+     Capability[Capability["Bookmark"] = TrackPlayer.CAPABILITY_BOOKMARK] = "Bookmark";
++    Capability[Capability["Browse"] = TrackPlayer.CAPABILITY_BROWSE] = "Browse";
+ })(Capability || (Capability = {}));

@@ -1,0 +1,17 @@
+export {
+	getDownloadsDirectory,
+	getDownloadFilePath,
+	downloadAudioFile,
+	copyToDownloads,
+	copyDirectoryToDownloads,
+	exportAudioToExternalDirectory,
+	deleteAudioFile,
+	deleteDownloadDirectory,
+	getFileInfo,
+	getDownloadedFilesSize,
+	clearAllDownloads,
+	type DownloadProgressCallback,
+	type DownloadResult,
+	type ExternalDownloadConfig,
+	type ExternalDownloadResult,
+} from './download-manager';
