@@ -245,9 +245,9 @@ export interface JioSaavnRadioStation {
 export interface JioSaavnLaunchData {
 	modules?: Record<string, JioSaavnLaunchModule>;
 	history?: unknown[];
-	new_trending?: Array<JioSaavnSong | JioSaavnAlbum | JioSaavnPlaylist>;
+	new_trending?: (JioSaavnSong | JioSaavnAlbum | JioSaavnPlaylist)[];
 	charts?: JioSaavnPlaylist[];
-	new_albums?: Array<JioSaavnSong | JioSaavnAlbum>;
+	new_albums?: (JioSaavnSong | JioSaavnAlbum)[];
 	top_playlists?: JioSaavnPlaylist[];
 	radio?: JioSaavnRadioStation[];
 	artist_recos?: JioSaavnRadioStation[];

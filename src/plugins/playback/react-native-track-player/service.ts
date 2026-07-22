@@ -1,4 +1,5 @@
 import TrackPlayer, { Event } from 'react-native-track-player';
+import { NativeModules } from 'react-native';
 import { getLogger } from '@shared/services/logger';
 import { useHomeFeedStore } from '@/src/application/state/home-feed-store';
 import { getArtistNames } from '@/src/domain/entities/track';
@@ -489,7 +490,6 @@ export async function PlaybackService(): Promise<void> {
 			}
 
 			// Send results back to native side
-			const { NativeModules } = require('react-native');
 			if (
 				NativeModules.TrackPlayerModule &&
 				NativeModules.TrackPlayerModule.setBrowseResults

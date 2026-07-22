@@ -428,7 +428,7 @@ export class SearchService {
 			this.suggestionCache.set(cacheKey, { suggestions: merged, timestamp: Date.now() });
 			store.setSuggestions(merged);
 			return ok(merged);
-		} catch (error) {
+		} catch {
 			if (!signal.aborted && suggestionVersion === this._suggestionVersion) {
 				store.setSuggestions(recent);
 			}

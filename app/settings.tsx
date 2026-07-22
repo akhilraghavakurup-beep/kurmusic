@@ -206,7 +206,7 @@ export default function SettingsScreen() {
 			await Image.clearMemoryCache();
 			await Image.clearDiskCache();
 			success('Cache cleared', 'Freed up memory and disk image cache');
-		} catch (_e) {
+		} catch {
 			success('Cache cleared', 'Temporary image cache cleared');
 		}
 	}, [success]);

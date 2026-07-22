@@ -7,6 +7,7 @@ import type {
 	PlaybackEvent,
 	PlaybackEventListener,
 	PlaybackProvider,
+	MetadataProvider,
 } from '@plugins/core';
 import { usePlayerStore } from '@/src/application';
 import { useToastStore } from '@/src/application/state/toast-store';
@@ -17,7 +18,6 @@ import { downloadService } from './download-service';
 import { getFileInfo } from '@infrastructure/filesystem';
 import { useSettingsStore } from '../state/settings-store';
 import { getPluginRegistry } from '../../plugins/core/registry/plugin-registry';
-import type { MetadataProvider } from '@plugins/core';
 
 const logger = getLogger('PlaybackService');
 
@@ -492,6 +492,7 @@ export class PlaybackService {
 
 		// Fallback to Library/Favorites matching the artist or general favorites
 		try {
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			const { useLibraryStore } = require('../state/library-store');
 			const libraryStore = useLibraryStore.getState();
 			const libraryTracks = libraryStore.tracks || [];

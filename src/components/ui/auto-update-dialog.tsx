@@ -45,7 +45,7 @@ export function AutoUpdateDialog() {
 					setUpdateInfo(info);
 					setVisible(true);
 				}
-			} catch (_err) {
+			} catch {
 				// Silent failure on startup update check
 			}
 		}, 1500);
@@ -68,7 +68,7 @@ export function AutoUpdateDialog() {
 			setLocalApkUri(localUri);
 			setUpdateState('ready');
 			await triggerUpdateInstall(localUri);
-		} catch (_err) {
+		} catch {
 			setUpdateState('error');
 		}
 	}, [updateInfo]);
@@ -77,7 +77,7 @@ export function AutoUpdateDialog() {
 		if (!localApkUri) return;
 		try {
 			await triggerUpdateInstall(localApkUri);
-		} catch (_err) {
+		} catch {
 			setUpdateState('error');
 		}
 	}, [localApkUri]);

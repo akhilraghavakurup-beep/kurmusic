@@ -74,7 +74,7 @@ function parseArtistBio(value?: string | null): string | undefined {
 	}
 
 	try {
-		const parsed = JSON.parse(decoded) as Array<{ text?: string | null }>;
+		const parsed = JSON.parse(decoded) as { text?: string | null }[];
 		const text = parsed
 			.map((section) => decode(section?.text))
 			.filter(Boolean)

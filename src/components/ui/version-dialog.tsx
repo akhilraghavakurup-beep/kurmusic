@@ -91,7 +91,7 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 			} else {
 				setUpdateState('up-to-date');
 			}
-		} catch (error) {
+		} catch {
 			setUpdateState('error');
 		}
 	};
@@ -108,7 +108,7 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 			setUpdateState('ready');
 			// Automatically trigger installation once downloaded
 			await triggerUpdateInstall(localUri);
-		} catch (error) {
+		} catch {
 			setUpdateState('error');
 		}
 	};
@@ -117,7 +117,7 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 		if (!localApkUri) return;
 		try {
 			await triggerUpdateInstall(localApkUri);
-		} catch (error) {
+		} catch {
 			setUpdateState('error');
 		}
 	};

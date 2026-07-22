@@ -37,7 +37,7 @@ export async function checkForUpdates(): Promise<UpdateInfo> {
 			const releaseData = (await releaseResponse.json()) as {
 				tag_name: string;
 				body?: string;
-				assets?: Array<{ name: string; browser_download_url: string }>;
+				assets?: { name: string; browser_download_url: string }[];
 			};
 
 			const rawVersion = releaseData.tag_name ? releaseData.tag_name.replace(/^v/, '') : '';

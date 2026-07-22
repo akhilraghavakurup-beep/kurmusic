@@ -1,4 +1,4 @@
-﻿import type { PluginConfig } from '@plugins/core/interfaces/base-plugin';
+import type { PluginConfig } from '@plugins/core/interfaces/base-plugin';
 import type { PluginModule } from '@plugins/core/interfaces/plugin-module';
 import type { MetadataProvider } from '@plugins/core/interfaces/metadata-provider';
 import { DEFAULT_CONFIG, PLUGIN_MANIFEST, type JioSaavnConfig } from './config';
