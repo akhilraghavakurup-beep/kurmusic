@@ -36,7 +36,6 @@ import {
 	FolderOpenIcon,
 	LanguagesIcon,
 	SparklesIcon,
-	HeartIcon,
 	UserIcon,
 	ShieldCheckIcon,
 	CpuIcon,

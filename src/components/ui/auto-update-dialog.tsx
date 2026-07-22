@@ -139,8 +139,7 @@ export function AutoUpdateDialog() {
 						variant={'labelLarge'}
 						style={[styles.changelogTitle, { color: colors.primary }]}
 					>
-						{"What's New in v"}
-						{updateInfo.latestVersion}:
+						What&apos;s New in v{updateInfo.latestVersion}:
 					</Text>
 
 					<View

@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react';
+import { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, Chip } from 'react-native-paper';
 import { ClockIcon, SparklesIcon } from 'lucide-react-native';

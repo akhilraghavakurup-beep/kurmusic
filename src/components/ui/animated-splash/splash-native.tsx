@@ -17,7 +17,7 @@ import Animated, {
 import type { AnimatedStyle } from 'react-native-reanimated';
 import type { ViewStyle } from 'react-native';
 import { AnimatedPolygonView } from '../animated-polygon';
-import { POLYGON_SIZE, ICON_SIZE } from './types';
+import { POLYGON_SIZE } from './types';
 import { styles } from './styles';
 
 interface SplashNativeProps {
@@ -51,18 +51,12 @@ export function SplashNative({
 
 	useEffect(() => {
 		logoScale.value = withRepeat(
-			withSequence(
-				withTiming(1.06, { duration: 1200 }),
-				withTiming(1, { duration: 1200 })
-			),
+			withSequence(withTiming(1.06, { duration: 1200 }), withTiming(1, { duration: 1200 })),
 			-1,
 			true
 		);
 		logoGlow.value = withRepeat(
-			withSequence(
-				withTiming(1, { duration: 1200 }),
-				withTiming(0.75, { duration: 1200 })
-			),
+			withSequence(withTiming(1, { duration: 1200 }), withTiming(0.75, { duration: 1200 })),
 			-1,
 			true
 		);

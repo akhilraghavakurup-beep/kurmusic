@@ -6,7 +6,7 @@
  */
 
 import { memo, useCallback } from 'react';
-import { TouchableOpacity as RNTouchableOpacity, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { TouchableOpacity as GHTouchableOpacity } from 'react-native-gesture-handler';
 import { Image } from 'expo-image';
 import { Text } from 'react-native-paper';

@@ -8,7 +8,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Image } from 'react-native';
 import { AnimatedPolygonView } from '../animated-polygon';
-import { POLYGON_SIZE, ICON_SIZE, ANIMATION_DURATION, PROGRESS_BAR_WIDTH } from './types';
+import { POLYGON_SIZE, ANIMATION_DURATION, PROGRESS_BAR_WIDTH } from './types';
 import { styles } from './styles';
 
 interface SplashWebProps {

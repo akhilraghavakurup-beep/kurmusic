@@ -7,7 +7,6 @@ import { trackActionsService } from '@/src/application/services/track-actions-se
 import { downloadService } from '@/src/application/services/download-service';
 import { playbackService } from '@/src/application/services/playback-service';
 import { useIsFavorite } from '@/src/application/state/library-store';
-import { setNavigationTrack } from '@/src/application/state/navigation-context-store';
 import { usePlayerUIStore } from '@/src/application/state/player-ui-store';
 import { useTagEditorStore } from '@/src/application/state/tag-editor-store';
 import { useToast } from '@/src/hooks/use-toast';
