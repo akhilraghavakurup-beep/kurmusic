@@ -15,12 +15,16 @@ export function QueueHeader({ trackCount, totalDurationFormatted, onClear }: Que
 	return (
 		<View style={styles.container}>
 			<View style={styles.titleRow}>
-				<Text variant={'titleMedium'} style={{ color: colors.onSurface, fontWeight: '700' }}>
+				<Text
+					variant={'titleMedium'}
+					style={{ color: colors.onSurface, fontWeight: '700' }}
+				>
 					Queue
 				</Text>
 				{trackCount > 0 && (
 					<Text variant={'labelMedium'} style={{ color: colors.onSurfaceVariant }}>
-						{trackCount} {trackCount === 1 ? 'song' : 'songs'} {totalDurationFormatted ? `• ${totalDurationFormatted}` : ''}
+						{trackCount} {trackCount === 1 ? 'song' : 'songs'}{' '}
+						{totalDurationFormatted ? `• ${totalDurationFormatted}` : ''}
 					</Text>
 				)}
 			</View>

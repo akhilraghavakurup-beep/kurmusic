@@ -13,12 +13,7 @@ export interface PlaylistRule {
 	readonly field: 'artist' | 'album' | 'genre' | 'year' | 'duration' | 'playCount' | 'addedAt';
 
 	readonly operator:
-		| 'equals'
-		| 'contains'
-		| 'startsWith'
-		| 'greaterThan'
-		| 'lessThan'
-		| 'between';
+		'equals' | 'contains' | 'startsWith' | 'greaterThan' | 'lessThan' | 'between';
 
 	readonly value: string | number | [number, number];
 }

@@ -55,14 +55,22 @@ export class JioSaavnClient {
 				{ signal }
 			);
 		}
-		return this._get<JioSaavnSongSearchResponse>('/api/search/songs', { query, page, limit }, signal);
+		return this._get<JioSaavnSongSearchResponse>(
+			'/api/search/songs',
+			{ query, page, limit },
+			signal
+		);
 	}
 
 	searchAlbums(query: string, page = 0, limit = 20, signal?: AbortSignal) {
 		if (this._usesDirectWebApi()) {
 			return this.searchAlbumsWeb(query, page + 1, limit, undefined, signal);
 		}
-		return this._get<JioSaavnAlbumSearchResponse>('/api/search/albums', { query, page, limit }, signal);
+		return this._get<JioSaavnAlbumSearchResponse>(
+			'/api/search/albums',
+			{ query, page, limit },
+			signal
+		);
 	}
 
 	searchArtists(query: string, page = 0, limit = 20, signal?: AbortSignal) {
@@ -73,7 +81,11 @@ export class JioSaavnClient {
 				{ signal }
 			);
 		}
-		return this._get<JioSaavnArtistSearchResponse>('/api/search/artists', { query, page, limit }, signal);
+		return this._get<JioSaavnArtistSearchResponse>(
+			'/api/search/artists',
+			{ query, page, limit },
+			signal
+		);
 	}
 
 	searchPlaylists(query: string, page = 0, limit = 20, signal?: AbortSignal) {
@@ -111,7 +123,11 @@ export class JioSaavnClient {
 
 	getSongSuggestions(songId: string, limit = 20, language?: string, signal?: AbortSignal) {
 		if (this._usesDirectWebApi()) {
-			return this._webGet<JioSaavnSong[]>('reco.getreco', { pid: songId }, { language, signal });
+			return this._webGet<JioSaavnSong[]>(
+				'reco.getreco',
+				{ pid: songId },
+				{ language, signal }
+			);
 		}
 		return this._get<JioSaavnSong[]>(`/api/songs/${songId}/suggestions`, { limit }, signal);
 	}
@@ -146,7 +162,11 @@ export class JioSaavnClient {
 			return first;
 		}
 
-		const data = await this._get<JioSaavnSong[] | JioSaavnSong>(`/api/songs/${songId}`, {}, signal);
+		const data = await this._get<JioSaavnSong[] | JioSaavnSong>(
+			`/api/songs/${songId}`,
+			{},
+			signal
+		);
 		if (Array.isArray(data)) {
 			const first = data[0];
 			if (!first) {
@@ -170,13 +190,15 @@ export class JioSaavnClient {
 
 	getAlbum(albumId: string, signal?: AbortSignal): Promise<JioSaavnAlbum> {
 		if (this._usesDirectWebApi()) {
-			return this._webGet<JioSaavnAlbum>('content.getAlbumDetails', { cc: 'in', albumid: albumId }, { signal }).then(
-				(album) => ({
-					...album,
-					songCount: album.songCount ?? album.list_count,
-					songs: album.songs ?? album.list,
-				})
-			);
+			return this._webGet<JioSaavnAlbum>(
+				'content.getAlbumDetails',
+				{ cc: 'in', albumid: albumId },
+				{ signal }
+			).then((album) => ({
+				...album,
+				songCount: album.songCount ?? album.list_count,
+				songs: album.songs ?? album.list,
+			}));
 		}
 		return this._get<JioSaavnAlbum>('/api/albums', { id: albumId }, signal);
 	}

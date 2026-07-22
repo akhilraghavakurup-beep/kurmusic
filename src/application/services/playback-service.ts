@@ -135,8 +135,6 @@ export class PlaybackService {
 		);
 	}
 
-
-
 	async play(track: Track): Promise<Result<void, Error>> {
 		return this.withPlayLock(async () => {
 			const sessionId = ++this._playSessionId;
@@ -153,7 +151,9 @@ export class PlaybackService {
 
 			const streamResult = await this._resolveStreamForTrack(track, sessionId);
 			if (sessionId !== this._playSessionId) {
-				logger.debug(`Play session ${sessionId} was superseded by a newer request. Aborting...`);
+				logger.debug(
+					`Play session ${sessionId} was superseded by a newer request. Aborting...`
+				);
 				return ok(undefined);
 			}
 
@@ -175,7 +175,10 @@ export class PlaybackService {
 	 * Resolves the audio stream first before stopping the active provider
 	 * to prevent Android Auto timeouts and gapless/smooth track changes.
 	 */
-	private async _resolveStreamForTrack(track: Track, sessionId: number): Promise<Result<AudioStream, Error>> {
+	private async _resolveStreamForTrack(
+		track: Track,
+		sessionId: number
+	): Promise<Result<AudioStream, Error>> {
 		playbackTimer.beginPhase('resolve+stop');
 
 		// 1. Resolve stream URL first (takes 1-3 seconds)
@@ -276,7 +279,9 @@ export class PlaybackService {
 			return;
 		}
 
-		logger.debug(`[Pre-Cache] Queuing background resolution for next track: ${nextTrack.title}`);
+		logger.debug(
+			`[Pre-Cache] Queuing background resolution for next track: ${nextTrack.title}`
+		);
 
 		this._preCacheTimeoutId = setTimeout(async () => {
 			try {
@@ -286,10 +291,16 @@ export class PlaybackService {
 					this._cacheStream(nextTrackId, streamResult.data);
 					logger.debug(`[Pre-Cache] Successfully cached stream for: ${nextTrack.title}`);
 				} else {
-					logger.warn(`[Pre-Cache] Failed to resolve stream for ${nextTrack.title}:`, streamResult.error);
+					logger.warn(
+						`[Pre-Cache] Failed to resolve stream for ${nextTrack.title}:`,
+						streamResult.error
+					);
 				}
 			} catch (e) {
-				logger.warn(`[Pre-Cache] Error in background stream resolution for ${nextTrack.title}:`, e);
+				logger.warn(
+					`[Pre-Cache] Error in background stream resolution for ${nextTrack.title}:`,
+					e
+				);
 			}
 		}, 1000); // 1s delay to prioritize currently starting playback
 	}
@@ -421,17 +432,16 @@ export class PlaybackService {
 		return this.activeProvider.setVolume(volume);
 	}
 
-	async appendRecommendationsFromTrack(
-		track: Track,
-		limit = 5
-	): Promise<Result<number, Error>> {
+	async appendRecommendationsFromTrack(track: Track, limit = 5): Promise<Result<number, Error>> {
 		const provider = this._getRecommendationProvider(track);
 		const recommendationsResult = await this._resolveRecommendations(track, provider, limit);
 		if (!recommendationsResult.success) {
 			return err(recommendationsResult.error);
 		}
 
-		const recommendations = recommendationsResult.data.filter((item) => getTrackIdString(item.id) !== getTrackIdString(track.id));
+		const recommendations = recommendationsResult.data.filter(
+			(item) => getTrackIdString(item.id) !== getTrackIdString(track.id)
+		);
 		if (recommendations.length === 0) {
 			return ok(0);
 		}
@@ -454,7 +464,11 @@ export class PlaybackService {
 		let recommendationError: Error | null = null;
 
 		if (provider?.getRecommendations) {
-			const result = await provider.getRecommendations({ tracks: [track.id] }, undefined, limit);
+			const result = await provider.getRecommendations(
+				{ tracks: [track.id] },
+				undefined,
+				limit
+			);
 			if (result.success && result.data.length > 0) {
 				return ok(result.data);
 			}
@@ -493,7 +507,9 @@ export class PlaybackService {
 						t.artists.some((a) => a.name.toLowerCase().includes(primaryArtist))
 					);
 					if (matchingArtistTracks.length > 0) {
-						logger.debug(`Library recommendation fallback: found ${matchingArtistTracks.length} tracks matching artist "${primaryArtist}"`);
+						logger.debug(
+							`Library recommendation fallback: found ${matchingArtistTracks.length} tracks matching artist "${primaryArtist}"`
+						);
 						candidates = matchingArtistTracks;
 					}
 				}
@@ -502,10 +518,14 @@ export class PlaybackService {
 				if (candidates === libraryTracks && libraryStore.favorites) {
 					const favIds = Array.from(libraryStore.favorites);
 					const matchingFavTracks = libraryTracks.filter(
-						(t: Track) => getTrackIdString(t.id) !== getTrackIdString(track.id) && favIds.includes(getTrackIdString(t.id))
+						(t: Track) =>
+							getTrackIdString(t.id) !== getTrackIdString(track.id) &&
+							favIds.includes(getTrackIdString(t.id))
 					);
 					if (matchingFavTracks.length > 0) {
-						logger.debug(`Library recommendation fallback: found ${matchingFavTracks.length} favorites`);
+						logger.debug(
+							`Library recommendation fallback: found ${matchingFavTracks.length} favorites`
+						);
 						candidates = matchingFavTracks;
 					}
 				}
@@ -520,7 +540,9 @@ export class PlaybackService {
 			logger.warn('Failed to resolve library recommendation fallback', fallbackError);
 		}
 
-		return err(recommendationError ?? new Error('No recommendation provider available for this track'));
+		return err(
+			recommendationError ?? new Error('No recommendation provider available for this track')
+		);
 	}
 
 	private _getCachedStream(trackId: string): AudioStream | null {

@@ -19,7 +19,8 @@ export const PLUGIN_MANIFEST: PluginManifest = {
 	id: 'jiosaavn',
 	name: 'JioSaavn',
 	shortName: 'JS',
-	description: 'Browse, search, and stream music from JioSaavn using the direct web API or a compatible proxy',
+	description:
+		'Browse, search, and stream music from JioSaavn using the direct web API or a compatible proxy',
 	version: '1.0.0',
 	author: 'Kur Music',
 	category: 'metadata-provider',

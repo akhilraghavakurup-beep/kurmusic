@@ -82,8 +82,7 @@ export default function SearchScreen() {
 	const removeRecentSearch = useSearchStore((s) => s.removeRecentSearch);
 	const clearRecentSearches = useSearchStore((s) => s.clearRecentSearches);
 
-	const { recentlyPlayed, favoriteTracks, hasCuratedContent } =
-		useCuratedContent(10);
+	const { recentlyPlayed, favoriteTracks, hasCuratedContent } = useCuratedContent(10);
 
 	const {
 		query,
@@ -319,7 +318,6 @@ export default function SearchScreen() {
 									icon={HeartIcon}
 									tracks={favoriteTracks}
 								/>
-
 							</>
 						)}
 					</>

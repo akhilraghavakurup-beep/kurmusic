@@ -15,12 +15,7 @@
  *    useDownloadStore.getState() to avoid stale-closure bugs.
  */
 
-import React, {
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	View,
 	StyleSheet,
@@ -51,11 +46,7 @@ import {
 	RefreshCw,
 	AlertCircle,
 } from 'lucide-react-native';
-import Animated, {
-	FadeIn,
-	FadeOut,
-	SlideInDown,
-} from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, SlideInDown } from 'react-native-reanimated';
 import {
 	useTagEditorStore,
 	useIsTagEditorOpen,
@@ -229,10 +220,17 @@ function SearchResultCard({ track, onSelect, colors }: SearchResultCardProps) {
 			activeOpacity={0.75}
 		>
 			{artwork?.url ? (
-				<Image source={{ uri: artwork.url }} style={resultCardStyles.artwork} contentFit={'cover'} />
+				<Image
+					source={{ uri: artwork.url }}
+					style={resultCardStyles.artwork}
+					contentFit={'cover'}
+				/>
 			) : (
 				<View
-					style={[resultCardStyles.artwork, { backgroundColor: colors.surfaceContainerHighest }]}
+					style={[
+						resultCardStyles.artwork,
+						{ backgroundColor: colors.surfaceContainerHighest },
+					]}
 				/>
 			)}
 			<View style={resultCardStyles.info}>
@@ -243,7 +241,11 @@ function SearchResultCard({ track, onSelect, colors }: SearchResultCardProps) {
 				>
 					{track.title}
 				</Text>
-				<Text variant={'bodySmall'} numberOfLines={1} style={{ color: colors.onSurfaceVariant }}>
+				<Text
+					variant={'bodySmall'}
+					numberOfLines={1}
+					style={{ color: colors.onSurfaceVariant }}
+				>
 					{artist}
 					{track.album ? ` • ${track.album.name}` : ''}
 				</Text>
@@ -446,7 +448,9 @@ export function TagEditorSheet() {
 				try {
 					// Delete old external file SAF URI first to prevent duplicates or name clashes
 					if (downloadedMeta.externalFilePath) {
-						await FileSystem.deleteAsync(downloadedMeta.externalFilePath, { idempotent: true }).catch(() => {});
+						await FileSystem.deleteAsync(downloadedMeta.externalFilePath, {
+							idempotent: true,
+						}).catch(() => {});
 					}
 
 					const exportResult = await exportAudioToExternalDirectory(
@@ -466,7 +470,10 @@ export function TagEditorSheet() {
 						newExternalDirectoryName = exportResult.data.directoryName;
 					}
 				} catch (exportError) {
-					console.warn('Failed to re-export updated file to selected directory:', exportError);
+					console.warn(
+						'Failed to re-export updated file to selected directory:',
+						exportError
+					);
 				}
 			}
 
@@ -507,7 +514,10 @@ export function TagEditorSheet() {
 			snapPoints={['75%', '92%']}
 			backdropComponent={renderBackdrop}
 			onChange={handleSheetChange}
-			backgroundStyle={[styles.sheetBackground, { backgroundColor: colors.surfaceContainerHigh }]}
+			backgroundStyle={[
+				styles.sheetBackground,
+				{ backgroundColor: colors.surfaceContainerHigh },
+			]}
 			handleIndicatorStyle={{ backgroundColor: colors.outlineVariant }}
 		>
 			{/* Only render content when a track is active */}
@@ -515,13 +525,18 @@ export function TagEditorSheet() {
 				<BottomSheetView style={styles.container}>
 					{/* ── Header ──────────────────────────────────────────── */}
 					<View style={styles.header}>
-						<View style={[styles.headerIcon, { backgroundColor: `${colors.primary}18` }]}>
+						<View
+							style={[styles.headerIcon, { backgroundColor: `${colors.primary}18` }]}
+						>
 							<PenLine size={20} color={colors.primary} />
 						</View>
 						<View style={{ flex: 1 }}>
 							<Text
 								variant={'titleMedium'}
-								style={{ color: colors.onSurface, fontFamily: resolveDisplayFont('700') }}
+								style={{
+									color: colors.onSurface,
+									fontFamily: resolveDisplayFont('700'),
+								}}
 							>
 								Edit Tags
 							</Text>
@@ -553,7 +568,10 @@ export function TagEditorSheet() {
 							{artworkUrl ? (
 								<Image
 									source={{ uri: artworkUrl }}
-									style={[styles.artworkPreview, { borderColor: colors.outlineVariant }]}
+									style={[
+										styles.artworkPreview,
+										{ borderColor: colors.outlineVariant },
+									]}
 									contentFit={'cover'}
 									transition={300}
 								/>
@@ -574,19 +592,31 @@ export function TagEditorSheet() {
 							<View style={{ flex: 1, gap: 4 }}>
 								<Text
 									variant={'labelMedium'}
-									style={{ color: colors.onSurface, fontFamily: resolveDisplayFont('600') }}
+									style={{
+										color: colors.onSurface,
+										fontFamily: resolveDisplayFont('600'),
+									}}
 								>
 									{title || track.title}
 								</Text>
-								<Text variant={'labelSmall'} style={{ color: colors.onSurfaceVariant }}>
+								<Text
+									variant={'labelSmall'}
+									style={{ color: colors.onSurfaceVariant }}
+								>
 									{artist || getArtistNames(track)}
 								</Text>
 								{newArtworkUrl && (
 									<Animated.View
 										entering={FadeIn.duration(200)}
-										style={[styles.artworkBadge, { backgroundColor: `${colors.primary}20` }]}
+										style={[
+											styles.artworkBadge,
+											{ backgroundColor: `${colors.primary}20` },
+										]}
 									>
-										<Text variant={'labelSmall'} style={{ color: colors.primary }}>
+										<Text
+											variant={'labelSmall'}
+											style={{ color: colors.primary }}
+										>
 											New artwork selected ✓
 										</Text>
 									</Animated.View>
@@ -640,7 +670,10 @@ export function TagEditorSheet() {
 							)}
 							<Text
 								variant={'labelLarge'}
-								style={{ color: colors.secondary, fontFamily: resolveDisplayFont('600') }}
+								style={{
+									color: colors.secondary,
+									fontFamily: resolveDisplayFont('600'),
+								}}
 							>
 								{isSearching ? 'Searching JioSaavn…' : 'Fetch from JioSaavn'}
 							</Text>
@@ -648,9 +681,15 @@ export function TagEditorSheet() {
 
 						{/* ── Search results ────────────────────────────────── */}
 						{searchVisible && (
-							<Animated.View entering={SlideInDown.duration(280)} exiting={FadeOut.duration(150)}>
+							<Animated.View
+								entering={SlideInDown.duration(280)}
+								exiting={FadeOut.duration(150)}
+							>
 								<View style={styles.resultsHeader}>
-									<Text variant={'labelMedium'} style={{ color: colors.onSurfaceVariant }}>
+									<Text
+										variant={'labelMedium'}
+										style={{ color: colors.onSurfaceVariant }}
+									>
 										{searchResults.length > 0
 											? `${searchResults.length} results — tap to auto-fill`
 											: isSearching
@@ -676,10 +715,19 @@ export function TagEditorSheet() {
 						{saveError && (
 							<Animated.View
 								entering={FadeIn.duration(200)}
-								style={[styles.errorBanner, { backgroundColor: `${colors.error}14`, borderColor: `${colors.error}40` }]}
+								style={[
+									styles.errorBanner,
+									{
+										backgroundColor: `${colors.error}14`,
+										borderColor: `${colors.error}40`,
+									},
+								]}
 							>
 								<AlertCircle size={16} color={colors.error} />
-								<Text variant={'bodySmall'} style={{ color: colors.error, flex: 1 }}>
+								<Text
+									variant={'bodySmall'}
+									style={{ color: colors.error, flex: 1 }}
+								>
 									{saveError}
 								</Text>
 							</Animated.View>
@@ -705,7 +753,10 @@ export function TagEditorSheet() {
 							)}
 							<Text
 								variant={'labelLarge'}
-								style={{ color: colors.onPrimary, fontFamily: resolveDisplayFont('700') }}
+								style={{
+									color: colors.onPrimary,
+									fontFamily: resolveDisplayFont('700'),
+								}}
 							>
 								{isSaving ? 'Saving…' : 'Save Metadata'}
 							</Text>

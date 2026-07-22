@@ -44,7 +44,9 @@ export function createSearchOperations(client: JioSaavnClient): SearchOperations
 			try {
 				const { limit, offset, page } = getPaging(options);
 				const response = await client.searchSongs(query, page, limit, options?.signal);
-				const items = response.results.map(mapSong).filter((track): track is Track => !!track);
+				const items = response.results
+					.map(mapSong)
+					.filter((track): track is Track => !!track);
 				return ok(
 					createSearchResults(items, {
 						total: response.total ?? items.length,
@@ -62,7 +64,9 @@ export function createSearchOperations(client: JioSaavnClient): SearchOperations
 			try {
 				const { limit, offset, page } = getPaging(options);
 				const response = await client.searchAlbums(query, page, limit, options?.signal);
-				const items = response.results.map(mapAlbum).filter((album): album is Album => !!album);
+				const items = response.results
+					.map(mapAlbum)
+					.filter((album): album is Album => !!album);
 				return ok(
 					createSearchResults(items, {
 						total: response.total ?? items.length,

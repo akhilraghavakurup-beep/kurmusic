@@ -113,7 +113,9 @@ export class JioSaavnProvider implements MetadataProvider, AudioSourceProvider {
 
 		const seedTrack = seed.tracks?.[0];
 		if (!seedTrack || seedTrack.sourceType !== 'jiosaavn') {
-			return Promise.resolve(err(new Error('JioSaavn recommendations require a JioSaavn track')));
+			return Promise.resolve(
+				err(new Error('JioSaavn recommendations require a JioSaavn track'))
+			);
 		}
 
 		const language = getHomeContentLanguageHeader();
@@ -123,7 +125,9 @@ export class JioSaavnProvider implements MetadataProvider, AudioSourceProvider {
 				ok(
 					songs
 						.map(mapSong)
-						.filter((track): track is Track => !!track && track.id.value !== seedTrack.value)
+						.filter(
+							(track): track is Track => !!track && track.id.value !== seedTrack.value
+						)
 				)
 			)
 			.catch((error) => err(error instanceof Error ? error : new Error(String(error))));
@@ -166,15 +170,24 @@ export class JioSaavnProvider implements MetadataProvider, AudioSourceProvider {
 		return this._streaming().supportsTrack(track);
 	}
 
-	searchTracks(query: string, options?: SearchOptions): Promise<Result<SearchResults<Track>, Error>> {
+	searchTracks(
+		query: string,
+		options?: SearchOptions
+	): Promise<Result<SearchResults<Track>, Error>> {
 		return this._search().searchTracks(query, options);
 	}
 
-	searchAlbums(query: string, options?: SearchOptions): Promise<Result<SearchResults<Album>, Error>> {
+	searchAlbums(
+		query: string,
+		options?: SearchOptions
+	): Promise<Result<SearchResults<Album>, Error>> {
 		return this._search().searchAlbums(query, options);
 	}
 
-	searchArtists(query: string, options?: SearchOptions): Promise<Result<SearchResults<Artist>, Error>> {
+	searchArtists(
+		query: string,
+		options?: SearchOptions
+	): Promise<Result<SearchResults<Artist>, Error>> {
 		return this._search().searchArtists(query, options);
 	}
 

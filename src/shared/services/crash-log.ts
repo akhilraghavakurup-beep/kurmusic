@@ -48,7 +48,9 @@ function formatEntry(message: string, details: Record<string, unknown>): string 
 		`Platform: ${Platform.OS}`,
 		`App Version: ${Constants.expoConfig?.version ?? 'unknown'}`,
 		`Message: ${message}`,
-		...Object.entries(details).map(([key, value]) => `${key}: ${typeof value === 'string' ? value : stringifyError(value)}`),
+		...Object.entries(details).map(
+			([key, value]) => `${key}: ${typeof value === 'string' ? value : stringifyError(value)}`
+		),
 		'======================',
 	];
 
@@ -80,9 +82,7 @@ export async function recordCrashLog(
 	message: string,
 	details: Record<string, unknown> = {}
 ): Promise<void> {
-	writeQueue = writeQueue
-		.then(() => appendText(formatEntry(message, details)))
-		.catch(() => {});
+	writeQueue = writeQueue.then(() => appendText(formatEntry(message, details))).catch(() => {});
 
 	await writeQueue;
 }

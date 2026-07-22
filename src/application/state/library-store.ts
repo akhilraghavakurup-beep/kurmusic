@@ -13,12 +13,12 @@ function normalizeTrack(track: Track): Track {
 
 	const normalizedId =
 		typeof rawId === 'string'
-			? TrackId.tryFromString(rawId) ?? track.id
+			? (TrackId.tryFromString(rawId) ?? track.id)
 			: rawId &&
 				  typeof rawId === 'object' &&
 				  'value' in rawId &&
 				  typeof (rawId as { value?: unknown }).value === 'string'
-				? TrackId.tryFromString((rawId as { value: string }).value) ?? track.id
+				? (TrackId.tryFromString((rawId as { value: string }).value) ?? track.id)
 				: track.id;
 
 	const normalizedDuration =
@@ -56,8 +56,7 @@ function normalizePlaylist(playlist: Playlist): Playlist {
 				typeof playlistTrack.addedAt === 'number'
 					? new Date(playlistTrack.addedAt)
 					: playlistTrack.addedAt,
-			position:
-				typeof playlistTrack.position === 'number' ? playlistTrack.position : index,
+			position: typeof playlistTrack.position === 'number' ? playlistTrack.position : index,
 		})),
 		createdAt:
 			typeof playlist.createdAt === 'string' || typeof playlist.createdAt === 'number'
@@ -127,11 +126,15 @@ export const useLibraryStore = create<LibraryState>()(
 			addTrack: (track: Track) => {
 				set((state) => {
 					const normalizedTrack = normalizeTrack(track);
-					const exists = state.tracks.some((t) => t.id.value === normalizedTrack.id.value);
+					const exists = state.tracks.some(
+						(t) => t.id.value === normalizedTrack.id.value
+					);
 					if (exists) {
 						return state;
 					}
-					return { tracks: [...state.tracks, { ...normalizedTrack, addedAt: new Date() }] };
+					return {
+						tracks: [...state.tracks, { ...normalizedTrack, addedAt: new Date() }],
+					};
 				});
 			},
 
@@ -223,7 +226,7 @@ export const useLibraryStore = create<LibraryState>()(
 							? normalizePlaylist({
 									...p,
 									...updates,
-							  })
+								})
 							: p
 					),
 				}));
@@ -352,7 +355,9 @@ export const useLibraryStore = create<LibraryState>()(
 				if (state) {
 					state.favorites = new Set(state.favorites as unknown as string[]);
 					state.tracks = state.tracks.map((track) => normalizeTrack(track));
-					state.playlists = state.playlists.map((playlist) => normalizePlaylist(playlist));
+					state.playlists = state.playlists.map((playlist) =>
+						normalizePlaylist(playlist)
+					);
 					state.lastSyncedAt =
 						typeof state.lastSyncedAt === 'string' ||
 						typeof state.lastSyncedAt === 'number'

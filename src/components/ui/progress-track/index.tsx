@@ -113,7 +113,11 @@ export const ProgressTrack = memo(function ProgressTrack({
 				<Animated.View
 					style={[
 						thumbAnimatedStyle,
-						isBasic ? styles.basicThumb : isVariant ? styles.variantThumb : styles.thumb,
+						isBasic
+							? styles.basicThumb
+							: isVariant
+								? styles.variantThumb
+								: styles.thumb,
 						{ left: thumbOffset, backgroundColor: colors.primary },
 					]}
 				/>

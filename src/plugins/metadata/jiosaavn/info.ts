@@ -68,12 +68,18 @@ export function createInfoOperations(client: JioSaavnClient): InfoOperations {
 		},
 		async getArtistInfo(artistId) {
 			try {
-				const normalizedId = stripSourcePrefix(artistId).replace(/^(artist|featured|playlist|album)_/, '');
+				const normalizedId = stripSourcePrefix(artistId).replace(
+					/^(artist|featured|playlist|album)_/,
+					''
+				);
 				let artist;
 				try {
 					artist = await client.getArtist(normalizedId);
 				} catch {
-					artist = await client.getArtistPageDetails(normalizedId, getHomeContentLanguageHeader());
+					artist = await client.getArtistPageDetails(
+						normalizedId,
+						getHomeContentLanguageHeader()
+					);
 				}
 				const mapped = mapArtist(artist);
 				if (!mapped) {
@@ -99,7 +105,9 @@ export function createInfoOperations(client: JioSaavnClient): InfoOperations {
 		async getAlbumTracks(albumId, options) {
 			try {
 				const album = await client.getAlbum(stripSourcePrefix(albumId));
-				const tracks = (album.songs ?? []).map(mapSong).filter((track): track is Track => !!track);
+				const tracks = (album.songs ?? [])
+					.map(mapSong)
+					.filter((track): track is Track => !!track);
 				const sliced = sliceResults(tracks, options);
 				return ok(
 					createSearchResults(sliced.items, {
@@ -124,10 +132,15 @@ export function createInfoOperations(client: JioSaavnClient): InfoOperations {
 
 				try {
 					const response = await client.getArtistAlbums(normalizedId, page);
-					albums = response.results.map(mapAlbum).filter((album): album is Album => !!album);
+					albums = response.results
+						.map(mapAlbum)
+						.filter((album): album is Album => !!album);
 					total = response.total ?? albums.length;
 				} catch {
-					const artistPage = await client.getArtistPageDetails(normalizedId, getHomeContentLanguageHeader());
+					const artistPage = await client.getArtistPageDetails(
+						normalizedId,
+						getHomeContentLanguageHeader()
+					);
 					const fallbackAlbums = (artistPage.topAlbums ?? artistPage.singles ?? [])
 						.map(mapAlbum)
 						.filter((album): album is Album => !!album);

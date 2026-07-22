@@ -3,7 +3,10 @@ import type { AudioFormat, AudioStream } from '@domain/value-objects/audio-strea
 import { createAudioStream } from '@domain/value-objects/audio-stream';
 import type { StreamQuality } from '@domain/value-objects/audio-source';
 import type { TrackId } from '@domain/value-objects/track-id';
-import type { AvailableFormat, StreamOptions } from '@plugins/core/interfaces/audio-source-provider';
+import type {
+	AvailableFormat,
+	StreamOptions,
+} from '@plugins/core/interfaces/audio-source-provider';
 import type { AsyncResult } from '@shared/types/result';
 import { err, ok } from '@shared/types/result';
 import { sortDownloadUrls } from './mappers';
@@ -38,7 +41,8 @@ const formatFor = (url: string): AudioFormat =>
 						: url.toLowerCase().includes('.flac')
 							? 'flac'
 							: 'm4a';
-const targetBitrateFor = (quality: StreamQuality) => (quality === 'low' ? 48 : quality === 'medium' ? 96 : 320);
+const targetBitrateFor = (quality: StreamQuality) =>
+	quality === 'low' ? 48 : quality === 'medium' ? 96 : 320;
 
 function normalizeUrl(url: string): string {
 	return url.trim().replace(/^http:\/\//i, 'https://');

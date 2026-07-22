@@ -252,10 +252,7 @@ export interface JioSaavnLaunchData {
 	radio?: JioSaavnRadioStation[];
 	artist_recos?: JioSaavnRadioStation[];
 	[key: string]:
-		| Record<string, JioSaavnLaunchModule>
-		| unknown[]
-		| JioSaavnLaunchModule
-		| undefined;
+		Record<string, JioSaavnLaunchModule> | unknown[] | JioSaavnLaunchModule | undefined;
 }
 
 export interface JioSaavnRadioStationResponse {

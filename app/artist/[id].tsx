@@ -224,7 +224,9 @@ export default function ArtistScreen() {
 					<Text variant={'bodyMedium'} style={{ color: colors.onSurfaceVariant }}>
 						No content found for this artist
 					</Text>
-					<Button mode={'text'} onPress={handleSearchArtist}>Search for tracks</Button>
+					<Button mode={'text'} onPress={handleSearchArtist}>
+						Search for tracks
+					</Button>
 				</View>
 			);
 		}

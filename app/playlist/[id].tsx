@@ -56,7 +56,10 @@ function normalizeDuration(value: unknown): Duration {
 			totalSeconds?: unknown;
 		};
 
-		if (typeof candidate.totalMilliseconds === 'number' && Number.isFinite(candidate.totalMilliseconds)) {
+		if (
+			typeof candidate.totalMilliseconds === 'number' &&
+			Number.isFinite(candidate.totalMilliseconds)
+		) {
 			return Duration.fromMilliseconds(candidate.totalMilliseconds);
 		}
 
@@ -71,7 +74,7 @@ function normalizeDuration(value: unknown): Duration {
 function normalizeTrack(track: Track): Track {
 	const id =
 		typeof track.id === 'string'
-			? TrackId.tryFromString(track.id) ?? TrackId.create('unknown', track.id)
+			? (TrackId.tryFromString(track.id) ?? TrackId.create('unknown', track.id))
 			: track.id;
 
 	return {
@@ -97,7 +100,7 @@ export default function PlaylistScreen() {
 	const { colors } = useAppTheme();
 	const { playQueue, shufflePlay } = usePlayer();
 	const { success } = useToast();
-	const playlistId = Array.isArray(id) ? id[0] : id ?? '';
+	const playlistId = Array.isArray(id) ? id[0] : (id ?? '');
 
 	const [menuVisible, setMenuVisible] = useState(false);
 	const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -250,7 +253,8 @@ export default function PlaylistScreen() {
 	);
 
 	const keyExtractor = useCallback(
-		(item: PlaylistTrack, index: number) => `${normalizedPlaylist?.id}-${index}-${item.track.id.value}`,
+		(item: PlaylistTrack, index: number) =>
+			`${normalizedPlaylist?.id}-${index}-${item.track.id.value}`,
 		[normalizedPlaylist?.id]
 	);
 

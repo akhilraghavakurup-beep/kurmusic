@@ -203,9 +203,15 @@ export const useDownloadStore = create<DownloadState>()(
 						newDownloads.set(trackId, {
 							...existingDownload,
 							...(updates.title !== undefined && { title: updates.title }),
-							...(updates.artistName !== undefined && { artistName: updates.artistName }),
-							...(updates.albumName !== undefined && { albumName: updates.albumName }),
-							...(updates.artworkUrl !== undefined && { artworkUrl: updates.artworkUrl }),
+							...(updates.artistName !== undefined && {
+								artistName: updates.artistName,
+							}),
+							...(updates.albumName !== undefined && {
+								albumName: updates.albumName,
+							}),
+							...(updates.artworkUrl !== undefined && {
+								artworkUrl: updates.artworkUrl,
+							}),
 						});
 					}
 

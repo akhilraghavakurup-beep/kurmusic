@@ -24,7 +24,9 @@ async function resolvePlayableUri(
 	}
 
 	if (!originalPath.startsWith(CONTENT_URI_PREFIX)) {
-		return ok(originalPath.startsWith('/') ? `${FILE_URI_PREFIX}${originalPath}` : originalPath);
+		return ok(
+			originalPath.startsWith('/') ? `${FILE_URI_PREFIX}${originalPath}` : originalPath
+		);
 	}
 
 	const cachedPath = cachedPlayableUris.get(originalPath);
@@ -40,7 +42,9 @@ async function resolvePlayableUri(
 		return err(new Error('Playback cache directory unavailable'));
 	}
 
-	await FileSystem.makeDirectoryAsync(PLAYBACK_CACHE_DIR, { intermediates: true }).catch(() => {});
+	await FileSystem.makeDirectoryAsync(PLAYBACK_CACHE_DIR, { intermediates: true }).catch(
+		() => {}
+	);
 
 	const safeId = trackId.value.replace(/[^a-zA-Z0-9_-]/g, '_');
 	const extension = format || 'm4a';

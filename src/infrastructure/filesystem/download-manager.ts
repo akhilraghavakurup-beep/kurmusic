@@ -473,10 +473,7 @@ export async function deleteInternalDownloadBundle(filePath: string): Promise<Re
 		logger.debug(`Deleted internal download bundle: ${directory}`);
 		return ok(undefined);
 	} catch (error) {
-		logger.error(
-			'Delete internal bundle error',
-			error instanceof Error ? error : undefined
-		);
+		logger.error('Delete internal bundle error', error instanceof Error ? error : undefined);
 		return err(
 			error instanceof Error
 				? error

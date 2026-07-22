@@ -33,7 +33,8 @@ export const PLUGIN_ENTRIES: PluginManifestEntry[] = [
 	{
 		manifest: LOCAL_LIBRARY_MANIFEST,
 		load: async () => {
-			const { LocalLibraryPluginModule } = await import('./metadata/local-library/plugin-module');
+			const { LocalLibraryPluginModule } =
+				await import('./metadata/local-library/plugin-module');
 			return LocalLibraryPluginModule;
 		},
 		isBuiltIn: true,

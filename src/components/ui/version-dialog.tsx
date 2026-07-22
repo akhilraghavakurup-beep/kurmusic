@@ -10,9 +10,21 @@ import { useState, useEffect } from 'react';
 import Constants from 'expo-constants';
 import { useAppTheme, M3Shapes } from '@/lib/theme';
 import { Icon } from '@/src/components/ui/icon';
-import { SmartphoneIcon, CpuIcon, PackageIcon, CodeIcon, DownloadIcon, CheckCircle2Icon, AlertCircleIcon } from 'lucide-react-native';
+import {
+	SmartphoneIcon,
+	CpuIcon,
+	PackageIcon,
+	CodeIcon,
+	DownloadIcon,
+	CheckCircle2Icon,
+	AlertCircleIcon,
+} from 'lucide-react-native';
 import type { LucideIcon } from 'lucide-react-native';
-import { checkForUpdates, downloadUpdateApk, triggerUpdateInstall } from '@/src/application/services/update-service';
+import {
+	checkForUpdates,
+	downloadUpdateApk,
+	triggerUpdateInstall,
+} from '@/src/application/services/update-service';
 
 interface VersionDialogProps {
 	readonly visible: boolean;
@@ -49,7 +61,9 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 	const platformVersion = `${Platform.OS === 'ios' ? 'iOS' : 'Android'} ${Platform.Version}`;
 
 	// Update Checking State
-	const [updateState, setUpdateState] = useState<'idle' | 'checking' | 'available' | 'downloading' | 'ready' | 'up-to-date' | 'error'>('idle');
+	const [updateState, setUpdateState] = useState<
+		'idle' | 'checking' | 'available' | 'downloading' | 'ready' | 'up-to-date' | 'error'
+	>('idle');
 	const [latestVersion, setLatestVersion] = useState<string>('');
 	const [downloadUrl, setDownloadUrl] = useState<string>('');
 	const [downloadProgress, setDownloadProgress] = useState<number>(0);
@@ -150,7 +164,7 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 						<InfoRow icon={PackageIcon} label={'Version'} value={appVersion} />
 						<InfoRow icon={CodeIcon} label={'Developed by'} value={'Kurup'} />
 						<InfoRow icon={CodeIcon} label={'Tested by'} value={'Nemo'} />
-						<InfoRow icon={CodeIcon} label={'Build'} value={"New Road to Dreams"} />
+						<InfoRow icon={CodeIcon} label={'Build'} value={'New Road to Dreams'} />
 						<InfoRow icon={CodeIcon} label={'Expo SDK'} value={expoSdkVersion} />
 						<InfoRow icon={SmartphoneIcon} label={'Platform'} value={platformVersion} />
 						<InfoRow
@@ -167,7 +181,9 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 						{updateState === 'idle' && (
 							<Button
 								mode={'outlined'}
-								icon={() => <Icon as={PackageIcon} size={16} color={colors.primary} />}
+								icon={() => (
+									<Icon as={PackageIcon} size={16} color={colors.primary} />
+								)}
 								onPress={handleCheckForUpdates}
 								textColor={colors.primary}
 								style={{ borderColor: colors.outline }}
@@ -179,7 +195,10 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 						{updateState === 'checking' && (
 							<View style={styles.rowCenter}>
 								<ActivityIndicator size={'small'} color={colors.primary} />
-								<Text variant={'bodyMedium'} style={{ color: colors.onSurfaceVariant }}>
+								<Text
+									variant={'bodyMedium'}
+									style={{ color: colors.onSurfaceVariant }}
+								>
 									Checking repository for updates...
 								</Text>
 							</View>
@@ -196,15 +215,27 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 
 						{updateState === 'available' && (
 							<View style={styles.updateAvailableBox}>
-								<Text variant={'bodyMedium'} style={{ color: colors.onSurface, fontWeight: '600' }}>
+								<Text
+									variant={'bodyMedium'}
+									style={{ color: colors.onSurface, fontWeight: '600' }}
+								>
 									Update Available: v{latestVersion}
 								</Text>
-								<Text variant={'bodySmall'} style={{ color: colors.onSurfaceVariant, marginBottom: 8 }}>
+								<Text
+									variant={'bodySmall'}
+									style={{ color: colors.onSurfaceVariant, marginBottom: 8 }}
+								>
 									A newer version is ready in the cloud.
 								</Text>
 								<Button
 									mode={'contained'}
-									icon={() => <Icon as={DownloadIcon} size={16} color={colors.onPrimary} />}
+									icon={() => (
+										<Icon
+											as={DownloadIcon}
+											size={16}
+											color={colors.onPrimary}
+										/>
+									)}
 									onPress={handleDownloadUpdate}
 									textColor={colors.onPrimary}
 								>
@@ -215,10 +246,17 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 
 						{updateState === 'downloading' && (
 							<View style={styles.progressBox}>
-								<Text variant={'bodyMedium'} style={{ color: colors.onSurface, marginBottom: 4 }}>
+								<Text
+									variant={'bodyMedium'}
+									style={{ color: colors.onSurface, marginBottom: 4 }}
+								>
 									Downloading update: {Math.round(downloadProgress * 100)}%
 								</Text>
-								<ProgressBar progress={downloadProgress} color={colors.primary} style={styles.progressBar} />
+								<ProgressBar
+									progress={downloadProgress}
+									color={colors.primary}
+									style={styles.progressBar}
+								/>
 							</View>
 						)}
 
@@ -226,7 +264,10 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 							<View style={styles.updateAvailableBox}>
 								<View style={styles.rowCenter}>
 									<Icon as={CheckCircle2Icon} size={20} color={colors.primary} />
-									<Text variant={'bodyMedium'} style={{ color: colors.onSurface, fontWeight: '600' }}>
+									<Text
+										variant={'bodyMedium'}
+										style={{ color: colors.onSurface, fontWeight: '600' }}
+									>
 										Download Completed!
 									</Text>
 								</View>
@@ -245,20 +286,29 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 							<View style={styles.errorBox}>
 								<Icon as={AlertCircleIcon} size={20} color={colors.error} />
 								<View style={{ flex: 1 }}>
-									<Text variant={'bodyMedium'} style={{ color: colors.error, fontWeight: '600' }}>
+									<Text
+										variant={'bodyMedium'}
+										style={{ color: colors.error, fontWeight: '600' }}
+									>
 										Update failed
 									</Text>
-									<Text variant={'bodySmall'} style={{ color: colors.onErrorContainer }}>
+									<Text
+										variant={'bodySmall'}
+										style={{ color: colors.onErrorContainer }}
+									>
 										Could not fetch or install release APK.
 									</Text>
 								</View>
-								<Button mode={'text'} onPress={handleCheckForUpdates} textColor={colors.primary}>
+								<Button
+									mode={'text'}
+									onPress={handleCheckForUpdates}
+									textColor={colors.primary}
+								>
 									Retry
 								</Button>
 							</View>
 						)}
 					</View>
-
 				</Dialog.Content>
 				<Dialog.Actions style={styles.actions}>
 					<Button

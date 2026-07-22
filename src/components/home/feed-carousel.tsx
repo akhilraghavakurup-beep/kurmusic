@@ -31,18 +31,11 @@ export const FeedCarousel = memo(function FeedCarousel({ section }: FeedCarousel
 
 	useEffect(() => {
 		glowPulse.value = withRepeat(
-			withSequence(
-				withTiming(1, { duration: 1200 }),
-				withTiming(0.72, { duration: 1200 })
-			),
+			withSequence(withTiming(1, { duration: 1200 }), withTiming(0.72, { duration: 1200 })),
 			-1,
 			true
 		);
-		glowSweep.value = withRepeat(
-			withTiming(1, { duration: 2200 }),
-			-1,
-			true
-		);
+		glowSweep.value = withRepeat(withTiming(1, { duration: 2200 }), -1, true);
 	}, [glowPulse, glowSweep]);
 
 	const glowStyle = useAnimatedStyle(() => ({
@@ -144,7 +137,10 @@ export const FeedCarousel = memo(function FeedCarousel({ section }: FeedCarousel
 			>
 				<View style={styles.header}>
 					<View style={styles.headerTitleRow}>
-						<Text variant={'titleMedium'} style={[styles.title, { color: colors.onSurface }]}>
+						<Text
+							variant={'titleMedium'}
+							style={[styles.title, { color: colors.onSurface }]}
+						>
 							{section.title}
 						</Text>
 					</View>

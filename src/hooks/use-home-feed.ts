@@ -36,7 +36,11 @@ interface HomeFeedResult {
 function isRecentlyPlayedSection(section: FeedSection): boolean {
 	const title = section.title.trim().toLowerCase();
 	const id = section.id.trim().toLowerCase();
-	return title.includes('recently played') || id.includes('recently-played') || id.includes('recently_played');
+	return (
+		title.includes('recently played') ||
+		id.includes('recently-played') ||
+		id.includes('recently_played')
+	);
 }
 
 function buildLocalSections(curated: ReturnType<typeof useCuratedContent>): FeedSection[] {

@@ -109,12 +109,17 @@ export class ArtistService {
 				logger.debug(`Fetching artist ${idToUse} from ${provider.manifest.id}`);
 
 				const isNumericId = /^\d+$/.test(idToUse);
-				let artistInfoResult = (isNumericId && provider.hasCapability('get-artist-info'))
-					? await provider.getArtistInfo(idToUse)
-					: { success: false as const, error: new Error('Invalid or non-numeric ID') };
+				let artistInfoResult =
+					isNumericId && provider.hasCapability('get-artist-info')
+						? await provider.getArtistInfo(idToUse)
+						: {
+								success: false as const,
+								error: new Error('Invalid or non-numeric ID'),
+							};
 				let artistFromSearch: Artist | null = null;
 
-				const queryName = fallbackName || (!isNumericId ? idToUse.replace(/-/g, ' ') : undefined);
+				const queryName =
+					fallbackName || (!isNumericId ? idToUse.replace(/-/g, ' ') : undefined);
 
 				if (
 					!artistInfoResult.success &&
@@ -129,8 +134,12 @@ export class ArtistService {
 						);
 						if (matchedArtist) {
 							artistFromSearch = matchedArtist;
-							let cleanMatchedId = this._extractProviderArtistId(matchedArtist.id) ?? idToUse;
-							cleanMatchedId = cleanMatchedId.replace(/^(artist|featured|playlist|album)_/, '');
+							let cleanMatchedId =
+								this._extractProviderArtistId(matchedArtist.id) ?? idToUse;
+							cleanMatchedId = cleanMatchedId.replace(
+								/^(artist|featured|playlist|album)_/,
+								''
+							);
 							idToUse = cleanMatchedId;
 
 							const isNumericMatchedId = /^\d+$/.test(idToUse);
@@ -214,7 +223,9 @@ export class ArtistService {
 	private _hasArtistStationTracks(
 		provider: MetadataProvider
 	): provider is ArtistStationCapableProvider {
-		return typeof (provider as ArtistStationCapableProvider).getArtistStationTracks === 'function';
+		return (
+			typeof (provider as ArtistStationCapableProvider).getArtistStationTracks === 'function'
+		);
 	}
 
 	private _extractProviderArtistId(artistId: string): string | null {

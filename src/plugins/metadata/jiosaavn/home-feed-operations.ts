@@ -112,10 +112,7 @@ function mapAnyFeedItems(items: unknown[]): FeedItem[] {
 		}
 
 		const candidate = item as
-			| JioSaavnSong
-			| JioSaavnAlbum
-			| JioSaavnPlaylist
-			| JioSaavnRadioStation;
+			JioSaavnSong | JioSaavnAlbum | JioSaavnPlaylist | JioSaavnRadioStation;
 
 		if (candidate.type === 'radio_station') {
 			const artist = mapArtistStation(candidate as JioSaavnRadioStation);
@@ -480,7 +477,10 @@ export function createHomeFeedOperations(client: JioSaavnClient): HomeFeedOperat
 			}
 		},
 
-		async applyFilter(_chipText: string, language?: string): Promise<Result<HomeFeedData, Error>> {
+		async applyFilter(
+			_chipText: string,
+			language?: string
+		): Promise<Result<HomeFeedData, Error>> {
 			try {
 				const data = await buildHomeFeed(client, language);
 				return ok(data);

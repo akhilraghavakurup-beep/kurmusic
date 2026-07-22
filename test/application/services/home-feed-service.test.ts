@@ -283,7 +283,7 @@ describe('HomeFeedService', () => {
 			await service.applyFilter('Music', 1);
 
 			expect(ops.applyFilter).toHaveBeenCalledWith('Music', 'hindi');
-			});
+		});
 		it('should update active filter index in store', async () => {
 			const ops = createMockHomeFeedOps();
 			service.addHomeFeedProvider('test', ops);

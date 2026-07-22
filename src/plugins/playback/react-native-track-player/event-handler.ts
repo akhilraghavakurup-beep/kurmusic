@@ -136,12 +136,20 @@ export class EventHandler {
 
 		if (event.track) {
 			const track = this._state.trackMap.get(event.track.id);
-			if (track && getTrackIdString(track.id) !== (this._state.currentTrack ? getTrackIdString(this._state.currentTrack.id) : undefined)) {
+			if (
+				track &&
+				getTrackIdString(track.id) !==
+					(this._state.currentTrack
+						? getTrackIdString(this._state.currentTrack.id)
+						: undefined)
+			) {
 				logger.debug(`Native track transition detected: ${track.title}`);
 
 				// Find track in the store queue
 				const store = usePlayerStore.getState();
-				const index = store.queue.findIndex((t) => getTrackIdString(t.id) === getTrackIdString(track.id));
+				const index = store.queue.findIndex(
+					(t) => getTrackIdString(t.id) === getTrackIdString(track.id)
+				);
 
 				if (index >= 0) {
 					logger.debug(`Found track in queue at index ${index}. Triggering play...`);

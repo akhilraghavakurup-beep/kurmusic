@@ -122,7 +122,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 					<View style={styles.header}>
 						<Text style={styles.title}>Something went wrong</Text>
 						<View style={styles.headerActions}>
-							<Pressable onPress={this._handleExportLog} style={styles.secondaryButton}>
+							<Pressable
+								onPress={this._handleExportLog}
+								style={styles.secondaryButton}
+							>
 								<Text style={styles.resetButtonText}>
 									{this.state.exportingLog ? 'Exporting...' : 'Export Log'}
 								</Text>

@@ -96,7 +96,9 @@ export const REQUIRED_TABS: TabId[] = [];
  * Synchronize language preferences with the native cookie jar for JioSaavn.
  * This ensures that fetch() calls to JioSaavn correctly send the L cookie.
  */
-export async function syncNativeLanguageCookie(preferences?: HomeContentPreference[]): Promise<void> {
+export async function syncNativeLanguageCookie(
+	preferences?: HomeContentPreference[]
+): Promise<void> {
 	try {
 		const header = getHomeContentLanguageHeader(preferences);
 		const cookieValue = `L=${encodeURIComponent(header)}`;

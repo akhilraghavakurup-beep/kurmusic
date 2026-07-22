@@ -437,15 +437,17 @@ describe('LibraryStore', () => {
 	describe('Persistence', () => {
 		it('should persist tracks and playlists alongside favorites', () => {
 			const track = createTestTrack('persisted-track');
-			const playlist = createTestPlaylist('persisted-playlist', 'Persisted Playlist', [track]);
+			const playlist = createTestPlaylist('persisted-playlist', 'Persisted Playlist', [
+				track,
+			]);
 
 			useLibraryStore.getState().addTrack(track);
 			useLibraryStore.getState().addPlaylist(playlist);
 			useLibraryStore.getState().toggleFavorite(track.id.value);
 
-			const partialized = useLibraryStore.persist.getOptions().partialize?.(
-				useLibraryStore.getState()
-			) as {
+			const partialized = useLibraryStore.persist
+				.getOptions()
+				.partialize?.(useLibraryStore.getState()) as {
 				tracks: Track[];
 				playlists: Playlist[];
 				favorites: string[];

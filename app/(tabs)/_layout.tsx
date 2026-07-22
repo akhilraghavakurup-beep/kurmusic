@@ -165,7 +165,12 @@ function TabHeader({ initialTabId }: { readonly initialTabId: TabId }) {
 				</Text>
 				<View style={styles.headerActionSpacer}>
 					{isHomeFeed && (
-						<View style={[styles.brandLogoWrapper, { backgroundColor: colors.surfaceContainerHigh }]}>
+						<View
+							style={[
+								styles.brandLogoWrapper,
+								{ backgroundColor: colors.surfaceContainerHigh },
+							]}
+						>
 							<Image
 								source={require('@/assets/images/kur-logo.png')}
 								style={styles.brandLogo}

@@ -508,9 +508,9 @@ export class SearchService {
 							? 36
 							: 32;
 			const score =
-					sourceWeight +
-					this._scoreSuggestionMatch(queryLower, lower) +
-					this._preferredLanguageBonus(lower);
+				sourceWeight +
+				this._scoreSuggestionMatch(queryLower, lower) +
+				this._preferredLanguageBonus(lower);
 			if (score <= 0) return;
 			const previous = scoreMap.get(lower) ?? -1;
 			if (score > previous) {
@@ -548,7 +548,6 @@ export class SearchService {
 		if (candidateLower.includes(queryLower)) return 20;
 		return -100;
 	}
-
 
 	private _getPreferredLanguageTerms(): string[] {
 		const preferences = useSettingsStore.getState().homeContentPreferences;

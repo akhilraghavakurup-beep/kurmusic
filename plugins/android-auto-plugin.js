@@ -56,7 +56,9 @@ const withAndroidAuto = (config) => {
 		}
 
 		const hasMediaBrowserAction = musicService['intent-filter'].some((filter) =>
-			filter.action?.some((action) => action.$['android:name'] === 'android.media.browse.MediaBrowserService')
+			filter.action?.some(
+				(action) => action.$['android:name'] === 'android.media.browse.MediaBrowserService'
+			)
 		);
 
 		if (!hasMediaBrowserAction) {
@@ -111,7 +113,10 @@ const withAndroidAuto = (config) => {
     <uses name="media"/>
 </automotiveApp>`;
 
-			fs.writeFileSync(path.join(resXmlDir, 'automotive_app_desc.xml'), automotiveAppDescContent);
+			fs.writeFileSync(
+				path.join(resXmlDir, 'automotive_app_desc.xml'),
+				automotiveAppDescContent
+			);
 
 			// 5. Correct JitPack repository URL in root android/build.gradle (replace www.jitpack.io with jitpack.io)
 			const buildGradlePath = path.join(
