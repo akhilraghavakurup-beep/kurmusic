@@ -1,0 +1,5 @@
+Kur Music v1.1.2 (New Road to Dreams):
+• Improved Settings Quick Access 2x2 Grid Layout & Auto-Scaling Text
+• Symmetrically Aligned Main Player Play/Pause Controls & Optical Center Fix
+• Fixed OTA Update Service Repo Endpoints
+• Enhanced UI Polish & Performance Optimizations
