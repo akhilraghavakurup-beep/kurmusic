@@ -42,7 +42,9 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
 	const surfaceColor = colors.onSurface;
 
 	const shuffleIcon = useCallback(
-		() => <Shuffle size={secondaryIconSize} color={isShuffled ? colors.primary : surfaceColor} />,
+		() => (
+			<Shuffle size={secondaryIconSize} color={isShuffled ? colors.primary : surfaceColor} />
+		),
 		[secondaryIconSize, surfaceColor, isShuffled, colors.primary]
 	);
 
@@ -61,7 +63,10 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
 			repeatMode === 'one' ? (
 				<Repeat1 size={secondaryIconSize} color={colors.primary} />
 			) : (
-				<Repeat size={secondaryIconSize} color={repeatMode !== 'off' ? colors.primary : surfaceColor} />
+				<Repeat
+					size={secondaryIconSize}
+					color={repeatMode !== 'off' ? colors.primary : surfaceColor}
+				/>
 			),
 		[repeatMode, secondaryIconSize, surfaceColor, colors.primary]
 	);
@@ -79,23 +84,27 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
 	return (
 		<View style={styles.container}>
 			{/* Shuffle */}
-			<IconButton
-				icon={shuffleIcon}
-				size={secondaryIconSize}
-				onPress={toggleShuffle}
-				style={shuffleButtonStyle}
-			/>
+			<View style={styles.controlSlot}>
+				<IconButton
+					icon={shuffleIcon}
+					size={secondaryIconSize}
+					onPress={toggleShuffle}
+					style={shuffleButtonStyle}
+				/>
+			</View>
 
 			{/* Previous */}
-			<IconButton
-				icon={skipBackIcon}
-				size={secondaryIconSize}
-				onPress={skipToPrevious}
-				style={styles.controlButton}
-			/>
+			<View style={styles.controlSlot}>
+				<IconButton
+					icon={skipBackIcon}
+					size={secondaryIconSize}
+					onPress={skipToPrevious}
+					style={styles.controlButton}
+				/>
+			</View>
 
 			{/* Play/Pause */}
-			<View style={styles.fabWrapper}>
+			<View style={styles.centerSlot}>
 				<WavyPlayButton
 					isLoading={isLoading}
 					isPlaying={isPlaying}
@@ -107,20 +116,24 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
 			</View>
 
 			{/* Next */}
-			<IconButton
-				icon={skipForwardIcon}
-				size={secondaryIconSize}
-				onPress={skipToNext}
-				style={styles.controlButton}
-			/>
+			<View style={styles.controlSlot}>
+				<IconButton
+					icon={skipForwardIcon}
+					size={secondaryIconSize}
+					onPress={skipToNext}
+					style={styles.controlButton}
+				/>
+			</View>
 
 			{/* Repeat */}
-			<IconButton
-				icon={repeatIcon}
-				size={secondaryIconSize}
-				onPress={cycleRepeatMode}
-				style={repeatButtonStyle}
-			/>
+			<View style={styles.controlSlot}>
+				<IconButton
+					icon={repeatIcon}
+					size={secondaryIconSize}
+					onPress={cycleRepeatMode}
+					style={repeatButtonStyle}
+				/>
+			</View>
 		</View>
 	);
 }
@@ -128,16 +141,21 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
-		justifyContent: 'space-between',
 		alignItems: 'center',
+		justifyContent: 'space-between',
 		width: '100%',
+	},
+	controlSlot: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	centerSlot: {
+		alignItems: 'center',
+		justifyContent: 'center',
 		paddingHorizontal: 4,
 	},
 	controlButton: {
 		margin: 0,
-	},
-	fabWrapper: {
-		alignItems: 'center',
-		justifyContent: 'center',
 	},
 });

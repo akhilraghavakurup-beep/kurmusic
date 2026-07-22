@@ -75,7 +75,12 @@ export const WavyPlayButton = memo(function WavyPlayButton({
 					{isPlaying && !isLoading ? (
 						<Pause size={iconSize} color={iconColor} fill={iconColor} />
 					) : (
-						<Play size={iconSize} color={iconColor} fill={iconColor} />
+						<Play
+							size={iconSize}
+							color={iconColor}
+							fill={iconColor}
+							style={{ marginLeft: 3 }}
+						/>
 					)}
 				</View>
 			</AnimatedPressable>
