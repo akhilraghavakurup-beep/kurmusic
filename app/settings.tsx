@@ -35,7 +35,6 @@ import {
 	TagIcon,
 	FolderOpenIcon,
 	LanguagesIcon,
-	BroomIcon,
 	SparklesIcon,
 	HeartIcon,
 	UserIcon,
@@ -460,7 +459,7 @@ export default function SettingsScreen() {
 							onPress={openEqualizerSheet}
 						/>
 						<SettingsQuickAction
-							icon={BroomIcon}
+							icon={SparklesIcon}
 							label={'Clear Cache'}
 							value={'Clean'}
 							onPress={handleClearCache}
@@ -592,7 +591,7 @@ export default function SettingsScreen() {
 						subtitle={`${formatFileSize(stats.totalSize)} - ${stats.completedCount} downloaded files`}
 					/>
 					<SettingsItem
-						icon={BroomIcon}
+						icon={SparklesIcon}
 						title={'Clear temporary cache'}
 						subtitle={'Free up image and temporary data memory'}
 						onPress={handleClearCache}
