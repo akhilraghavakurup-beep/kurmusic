@@ -427,7 +427,7 @@ export default function SettingsScreen() {
 								numberOfLines={2}
 								style={[styles.heroSubtitle, { color: colors.onSurfaceVariant }]}
 							>
-								Version {appVersion} • KurMon's Hope
+								Version {appVersion} • New Road to Dreams
 							</Text>
 						</View>
 					</View>
@@ -677,7 +677,7 @@ export default function SettingsScreen() {
 					<SettingsItem
 						icon={CpuIcon}
 						title={'Audio Engine'}
-						subtitle={"KurMon's Hope (Engine)"}
+						subtitle={"New Road to Dreams (Engine)"}
 					/>
 					<SettingsItem
 						icon={InfoIcon}

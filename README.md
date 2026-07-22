@@ -13,7 +13,7 @@
     <img src="https://img.shields.io/github/v/release/akhilraghavakurup-beep/kur3.0?color=7C3AED&label=Version" alt="Version 1.1" />
   </a>
   <img src="https://img.shields.io/badge/Platform-Android%20arm64--v8a-blue" alt="Android ARM64" />
-  <img src="https://img.shields.io/badge/Engine-KurMon's%20Hope-purple" alt="Engine" />
+  <img src="https://img.shields.io/badge/Engine-New%20Road%20to%20Dreams-purple" alt="Engine" />
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License" />
 </p>
 

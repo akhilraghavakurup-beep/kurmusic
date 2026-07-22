@@ -150,7 +150,7 @@ export function VersionDialog({ visible, onDismiss }: VersionDialogProps) {
 						<InfoRow icon={PackageIcon} label={'Version'} value={appVersion} />
 						<InfoRow icon={CodeIcon} label={'Developed by'} value={'Kurup'} />
 						<InfoRow icon={CodeIcon} label={'Tested by'} value={'Nemo'} />
-						<InfoRow icon={CodeIcon} label={'Build'} value={"KurMon's Hope"} />
+						<InfoRow icon={CodeIcon} label={'Build'} value={"New Road to Dreams"} />
 						<InfoRow icon={CodeIcon} label={'Expo SDK'} value={expoSdkVersion} />
 						<InfoRow icon={SmartphoneIcon} label={'Platform'} value={platformVersion} />
 						<InfoRow
