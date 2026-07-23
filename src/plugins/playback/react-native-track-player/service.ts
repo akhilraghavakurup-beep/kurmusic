@@ -498,7 +498,6 @@ export async function PlaybackService(): Promise<void> {
 			}
 		} catch (error) {
 			logger.error('RemoteBrowse error', error instanceof Error ? error : undefined);
-			const { NativeModules } = require('react-native');
 			if (
 				NativeModules.TrackPlayerModule &&
 				NativeModules.TrackPlayerModule.setBrowseResults

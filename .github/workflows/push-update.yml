@@ -1,11 +1,16 @@
 name: Push Update (OTA)
 
 on:
+    push:
+        branches: [main]
+        paths-ignore:
+            - '*.md'
+            - 'docs/**'
     workflow_dispatch:
         inputs:
             version:
-                description: 'New Version (e.g. 4.5.0)'
-                required: true
+                description: 'New Version (e.g. 1.1.2)'
+                required: false
                 type: string
             release_notes:
                 description: 'Release Notes / Description'
@@ -36,6 +41,9 @@ jobs:
               id: version
               run: |
                   VERSION="${{ github.event.inputs.version }}"
+                  if [ -z "$VERSION" ]; then
+                    VERSION=$(node -p "require('./package.json').version")
+                  fi
                   VERSION="${VERSION#v}"
                   echo "version=$VERSION" >> $GITHUB_OUTPUT
                   echo "Pushing Update version: $VERSION"
@@ -163,7 +171,7 @@ jobs:
                   body: |
                       ## Update Notes (OTA)
 
-                      ${{ github.event.inputs.release_notes }}
+                      ${{ github.event.inputs.release_notes || 'Bug fixes and performance improvements.' }}
 
                       ## Downloads
 

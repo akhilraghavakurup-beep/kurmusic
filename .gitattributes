@@ -1,6 +1,13 @@
 # Auto detect text files and perform LF normalization
-* text=auto
+* text=auto eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf
 
 # patch-package files use unified diff context lines that intentionally contain
 # a leading space, so source whitespace checks should not lint them as code.
 patches/*.patch -whitespace
+
