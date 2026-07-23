@@ -1,7 +1,17 @@
 import type { StreamQuality } from './audio-source';
 
 export type AudioFormat =
-	'mp3' | 'aac' | 'opus' | 'flac' | 'webm' | 'ogg' | 'm4a' | 'ts' | 'wav' | 'hls' | 'm3u8';
+	| 'mp3'
+	| 'aac'
+	| 'opus'
+	| 'flac'
+	| 'webm'
+	| 'ogg'
+	| 'm4a'
+	| 'ts'
+	| 'wav'
+	| 'hls'
+	| 'm3u8';
 
 export interface AudioStream {
 	readonly url: string;

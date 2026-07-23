@@ -1,7 +1,16 @@
 import type { SourceType } from './track-id';
 
 export type AudioFileType =
-	'mp3' | 'flac' | 'aac' | 'm4a' | 'ts' | 'wav' | 'ogg' | 'opus' | 'webm' | 'm3u8';
+	| 'mp3'
+	| 'flac'
+	| 'aac'
+	| 'm4a'
+	| 'ts'
+	| 'wav'
+	| 'ogg'
+	| 'opus'
+	| 'webm'
+	| 'm3u8';
 
 export type StreamQuality = 'low' | 'medium' | 'high' | 'lossless';
 

@@ -207,7 +207,14 @@ export class LocalFilesProvider implements MetadataProvider, AudioSourceProvider
 				createAudioStream({
 					url: file.uri,
 					format: format as
-						'mp3' | 'aac' | 'opus' | 'flac' | 'webm' | 'ogg' | 'm4a' | 'wav',
+						| 'mp3'
+						| 'aac'
+						| 'opus'
+						| 'flac'
+						| 'webm'
+						| 'ogg'
+						| 'm4a'
+						| 'wav',
 					quality: 'high',
 					contentLength: file.size,
 				})
