@@ -82,11 +82,31 @@ export function SplashNative({
 			true
 		);
 
-		bar1.value = withRepeat(withSequence(withTiming(32, { duration: 400 }), withTiming(8, { duration: 400 })), -1, true);
-		bar2.value = withRepeat(withSequence(withTiming(14, { duration: 550 }), withTiming(38, { duration: 550 })), -1, true);
-		bar3.value = withRepeat(withSequence(withTiming(42, { duration: 350 }), withTiming(12, { duration: 350 })), -1, true);
-		bar4.value = withRepeat(withSequence(withTiming(10, { duration: 480 }), withTiming(34, { duration: 480 })), -1, true);
-		bar5.value = withRepeat(withSequence(withTiming(28, { duration: 380 }), withTiming(6, { duration: 380 })), -1, true);
+		bar1.value = withRepeat(
+			withSequence(withTiming(32, { duration: 400 }), withTiming(8, { duration: 400 })),
+			-1,
+			true
+		);
+		bar2.value = withRepeat(
+			withSequence(withTiming(14, { duration: 550 }), withTiming(38, { duration: 550 })),
+			-1,
+			true
+		);
+		bar3.value = withRepeat(
+			withSequence(withTiming(42, { duration: 350 }), withTiming(12, { duration: 350 })),
+			-1,
+			true
+		);
+		bar4.value = withRepeat(
+			withSequence(withTiming(10, { duration: 480 }), withTiming(34, { duration: 480 })),
+			-1,
+			true
+		);
+		bar5.value = withRepeat(
+			withSequence(withTiming(28, { duration: 380 }), withTiming(6, { duration: 380 })),
+			-1,
+			true
+		);
 	}, [bar1, bar2, bar3, bar4, bar5, logoGlow, logoScale, ringOpacity, ringScale]);
 
 	const logoStyle = useAnimatedStyle(() => ({
@@ -148,12 +168,45 @@ export function SplashNative({
 
 			<Animated.View style={[styles.progressSection, progressSectionStyle]}>
 				{/* Pulsing Soundwave Equalizer Bars */}
-				<View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 5, marginBottom: 14, height: 44 }}>
-					<Animated.View style={[{ width: 4, borderRadius: 2, backgroundColor: '#7C3AED' }, bar1Style]} />
-					<Animated.View style={[{ width: 4, borderRadius: 2, backgroundColor: '#A855F7' }, bar2Style]} />
-					<Animated.View style={[{ width: 4, borderRadius: 2, backgroundColor: '#06B6D4' }, bar3Style]} />
-					<Animated.View style={[{ width: 4, borderRadius: 2, backgroundColor: '#10B981' }, bar4Style]} />
-					<Animated.View style={[{ width: 4, borderRadius: 2, backgroundColor: '#7C3AED' }, bar5Style]} />
+				<View
+					style={{
+						flexDirection: 'row',
+						alignItems: 'flex-end',
+						gap: 5,
+						marginBottom: 14,
+						height: 44,
+					}}
+				>
+					<Animated.View
+						style={[
+							{ width: 4, borderRadius: 2, backgroundColor: '#7C3AED' },
+							bar1Style,
+						]}
+					/>
+					<Animated.View
+						style={[
+							{ width: 4, borderRadius: 2, backgroundColor: '#A855F7' },
+							bar2Style,
+						]}
+					/>
+					<Animated.View
+						style={[
+							{ width: 4, borderRadius: 2, backgroundColor: '#06B6D4' },
+							bar3Style,
+						]}
+					/>
+					<Animated.View
+						style={[
+							{ width: 4, borderRadius: 2, backgroundColor: '#10B981' },
+							bar4Style,
+						]}
+					/>
+					<Animated.View
+						style={[
+							{ width: 4, borderRadius: 2, backgroundColor: '#7C3AED' },
+							bar5Style,
+						]}
+					/>
 				</View>
 
 				<View style={[styles.progressTrack, { backgroundColor: colors.surfaceVariant }]}>
