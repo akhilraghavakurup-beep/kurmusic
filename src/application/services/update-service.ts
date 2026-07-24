@@ -102,14 +102,25 @@ export async function downloadUpdateApk(
 		const targetPath = `${FileSystem.cacheDirectory}kurmusic-update.apk`;
 		logger.debug(`Downloading update from: ${downloadUrl} to ${targetPath}`);
 
+		// Clean up any stale/incomplete APK download file first
+		const fileInfo = await FileSystem.getInfoAsync(targetPath);
+		if (fileInfo.exists) {
+			await FileSystem.deleteAsync(targetPath, { idempotent: true });
+		}
+
 		const downloadResumable = FileSystem.createDownloadResumable(
 			downloadUrl,
 			targetPath,
-			{},
+			{
+				headers: {
+					'User-Agent': 'KurMusic-App',
+					Accept: 'application/vnd.android.package-archive, */*',
+				},
+			},
 			(progressData) => {
 				const progress =
 					progressData.totalBytesWritten / progressData.totalBytesExpectedToWrite;
-				onProgress(isNaN(progress) ? 0 : progress);
+				onProgress(isNaN(progress) || !isFinite(progress) ? 0 : Math.max(0, Math.min(1, progress)));
 			}
 		);
 

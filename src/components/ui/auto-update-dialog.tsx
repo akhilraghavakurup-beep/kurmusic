@@ -13,6 +13,8 @@ import Constants from 'expo-constants';
 import { useAppTheme, M3Shapes } from '@/lib/theme';
 import { Icon } from '@/src/components/ui/icon';
 import { DownloadIcon, CheckCircle2Icon, AlertCircleIcon, SparklesIcon } from 'lucide-react-native';
+import { useAppState } from '@/src/hooks/use-app-state';
+import { useSettingsStore } from '@/src/application/state/settings-store';
 import {
 	checkForUpdates,
 	downloadUpdateApk,
@@ -31,22 +33,29 @@ export function AutoUpdateDialog() {
 	);
 	const [downloadProgress, setDownloadProgress] = useState(0);
 	const [localApkUri, setLocalApkUri] = useState('');
+	const [errorMessage, setErrorMessage] = useState('');
+
+	const performUpdateCheck = useCallback(async () => {
+		try {
+			const info = await checkForUpdates();
+			const skipped = useSettingsStore.getState().skippedUpdateVersion;
+
+			if (info.hasUpdate && info.latestVersion !== skipped) {
+				setUpdateInfo(info);
+				setVisible(true);
+			}
+		} catch {
+			// Silent background error
+		}
+	}, []);
 
 	useEffect(() => {
 		let isMounted = true;
 
 		// Perform background update check 1.5 seconds after app startup
-		const timer = setTimeout(async () => {
-			try {
-				const info = await checkForUpdates();
-				if (!isMounted) return;
-
-				if (info.hasUpdate) {
-					setUpdateInfo(info);
-					setVisible(true);
-				}
-			} catch {
-				// Silent failure on startup update check
+		const timer = setTimeout(() => {
+			if (isMounted) {
+				performUpdateCheck();
 			}
 		}, 1500);
 
@@ -54,12 +63,21 @@ export function AutoUpdateDialog() {
 			isMounted = false;
 			clearTimeout(timer);
 		};
-	}, []);
+	}, [performUpdateCheck]);
+
+	// Auto-check for updates whenever user brings app to foreground
+	useAppState({
+		onForeground: () => {
+			performUpdateCheck();
+		},
+		deferForegroundCallbacks: true,
+	});
 
 	const handleUpdateNow = useCallback(async () => {
 		if (!updateInfo?.downloadUrl) return;
 		setUpdateState('downloading');
 		setDownloadProgress(0);
+		setErrorMessage('');
 
 		try {
 			const localUri = await downloadUpdateApk(updateInfo.downloadUrl, (progress) => {
@@ -68,7 +86,10 @@ export function AutoUpdateDialog() {
 			setLocalApkUri(localUri);
 			setUpdateState('ready');
 			await triggerUpdateInstall(localUri);
-		} catch {
+		} catch (err) {
+			setErrorMessage(
+				err instanceof Error ? err.message : 'Download or installation failed.'
+			);
 			setUpdateState('error');
 		}
 	}, [updateInfo]);
@@ -77,10 +98,20 @@ export function AutoUpdateDialog() {
 		if (!localApkUri) return;
 		try {
 			await triggerUpdateInstall(localApkUri);
-		} catch {
+		} catch (err) {
+			setErrorMessage(
+				err instanceof Error ? err.message : 'Installation failed.'
+			);
 			setUpdateState('error');
 		}
 	}, [localApkUri]);
+
+	const handleSkipVersion = useCallback(() => {
+		if (updateInfo?.latestVersion) {
+			useSettingsStore.getState().setSkippedUpdateVersion(updateInfo.latestVersion);
+		}
+		setVisible(false);
+	}, [updateInfo]);
 
 	const handleDismiss = useCallback(() => {
 		setVisible(false);
@@ -197,7 +228,7 @@ export function AutoUpdateDialog() {
 						<View style={styles.errorBox}>
 							<Icon as={AlertCircleIcon} size={20} color={colors.error} />
 							<Text variant={'bodySmall'} style={{ color: colors.error, flex: 1 }}>
-								Download failed. Please check internet connection and try again.
+								{errorMessage || 'Download failed. Please check internet connection and try again.'}
 							</Text>
 						</View>
 					)}
@@ -220,25 +251,37 @@ export function AutoUpdateDialog() {
 							Install Update
 						</Button>
 					) : (
-						<View style={styles.rightButtons}>
+						<View style={styles.actionButtonsContainer}>
 							<Button
 								mode={'text'}
-								onPress={handleDismiss}
-								textColor={colors.onSurfaceVariant}
+								onPress={handleSkipVersion}
+								textColor={colors.outline}
+								compact={true}
 							>
-								Dismiss
+								Skip Version
 							</Button>
 
-							<Button
-								mode={'contained'}
-								icon={() => (
-									<Icon as={DownloadIcon} size={16} color={colors.onPrimary} />
-								)}
-								onPress={handleUpdateNow}
-								textColor={colors.onPrimary}
-							>
-								Update Now
-							</Button>
+							<View style={styles.rightButtons}>
+								<Button
+									mode={'text'}
+									onPress={handleDismiss}
+									textColor={colors.onSurfaceVariant}
+									compact={true}
+								>
+									Later
+								</Button>
+
+								<Button
+									mode={'contained'}
+									icon={() => (
+										<Icon as={DownloadIcon} size={16} color={colors.onPrimary} />
+									)}
+									onPress={handleUpdateNow}
+									textColor={colors.onPrimary}
+								>
+									Update Now
+								</Button>
+							</View>
 						</View>
 					)}
 				</Dialog.Actions>
