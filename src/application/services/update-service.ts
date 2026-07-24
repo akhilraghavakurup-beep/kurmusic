@@ -1,3 +1,4 @@
+import { Linking } from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import { installApk } from 'apk-installer';
 import { getLogger } from '@/src/shared/services/logger';
@@ -141,16 +142,32 @@ export async function downloadUpdateApk(
 
 /**
  * Triggers Android's package installer to install the downloaded APK.
+ * If native module installation fails (e.g. on legacy app builds without FileProvider),
+ * falls back to browser download via Linking.openURL.
  */
-export async function triggerUpdateInstall(localFileUri: string): Promise<boolean> {
+export async function triggerUpdateInstall(
+	localFileUri: string,
+	fallbackDownloadUrl?: string
+): Promise<boolean> {
 	try {
 		logger.debug(`Triggering install for: ${localFileUri}`);
 		return await installApk(localFileUri);
 	} catch (error) {
-		logger.error(
-			'Failed to launch APK installation',
+		logger.warn(
+			'Native APK installation failed, attempting browser fallback',
 			error instanceof Error ? error : undefined
 		);
+		if (fallbackDownloadUrl) {
+			try {
+				await Linking.openURL(fallbackDownloadUrl);
+				return true;
+			} catch (fallbackErr) {
+				logger.error(
+					'Browser fallback failed',
+					fallbackErr instanceof Error ? fallbackErr : undefined
+				);
+			}
+		}
 		throw error;
 	}
 }

@@ -79,30 +79,40 @@ export function AutoUpdateDialog() {
 		setDownloadProgress(0);
 		setErrorMessage('');
 
+		let localUri = '';
 		try {
-			const localUri = await downloadUpdateApk(updateInfo.downloadUrl, (progress) => {
+			localUri = await downloadUpdateApk(updateInfo.downloadUrl, (progress) => {
 				setDownloadProgress(progress);
 			});
 			setLocalApkUri(localUri);
 			setUpdateState('ready');
-			await triggerUpdateInstall(localUri);
 		} catch (err) {
 			setErrorMessage(
-				err instanceof Error ? err.message : 'Download or installation failed.'
+				err instanceof Error ? err.message : 'Download failed.'
 			);
+			setUpdateState('error');
+			return;
+		}
+
+		try {
+			await triggerUpdateInstall(localUri, updateInfo.downloadUrl);
+		} catch (err) {
+			setErrorMessage(err instanceof Error ? err.message : 'Installation failed.');
 			setUpdateState('error');
 		}
 	}, [updateInfo]);
 
 	const handleInstallAgain = useCallback(async () => {
-		if (!localApkUri) return;
+		if (!localApkUri && !updateInfo?.downloadUrl) return;
 		try {
-			await triggerUpdateInstall(localApkUri);
+			await triggerUpdateInstall(localApkUri, updateInfo?.downloadUrl);
 		} catch (err) {
-			setErrorMessage(err instanceof Error ? err.message : 'Installation failed.');
+			setErrorMessage(
+				err instanceof Error ? err.message : 'Installation failed.'
+			);
 			setUpdateState('error');
 		}
-	}, [localApkUri]);
+	}, [localApkUri, updateInfo]);
 
 	const handleSkipVersion = useCallback(() => {
 		if (updateInfo?.latestVersion) {
