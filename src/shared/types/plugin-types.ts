@@ -6,7 +6,12 @@
  */
 
 export type PluginStatus =
-	'uninitialized' | 'initializing' | 'ready' | 'active' | 'error' | 'disabled';
+	| 'uninitialized'
+	| 'initializing'
+	| 'ready'
+	| 'active'
+	| 'error'
+	| 'disabled';
 
 export type PluginCategory =
 	| 'metadata-provider'

@@ -22,7 +22,8 @@ export const LOCAL_LIBRARY_SOURCE = 'local-library';
 
 export function mapLocalTrackToTrack(localTrack: LocalTrack): Track {
 	const extension = localTrack.filePath.split('.').pop()?.toLowerCase() as
-		AudioFileType | undefined;
+		| AudioFileType
+		| undefined;
 
 	return {
 		id: TrackId.create(LOCAL_LIBRARY_SOURCE, localTrack.id),

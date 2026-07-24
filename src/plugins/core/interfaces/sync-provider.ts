@@ -13,7 +13,12 @@ export type SyncCapability =
 	| 'offline-queue';
 
 export type SyncEntityType =
-	'track' | 'playlist' | 'album' | 'artist' | 'playback-state' | 'settings';
+	| 'track'
+	| 'playlist'
+	| 'album'
+	| 'artist'
+	| 'playback-state'
+	| 'settings';
 
 export type SyncOperation = 'create' | 'update' | 'delete';
 
