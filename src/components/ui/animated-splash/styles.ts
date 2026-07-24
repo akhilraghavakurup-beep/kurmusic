@@ -25,14 +25,12 @@ export const styles = StyleSheet.create({
 		position: 'absolute',
 	},
 	iconWrapper: {
-		width: 132,
-		height: 132,
+		width: 140,
+		height: 140,
 		position: 'absolute',
 		alignItems: 'center',
 		justifyContent: 'center',
 		zIndex: 999999,
-		borderRadius: 28,
-		overflow: 'hidden',
 	},
 	progressSection: {
 		position: 'absolute',

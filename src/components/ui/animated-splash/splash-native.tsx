@@ -47,25 +47,63 @@ export function SplashNative({
 	progressSectionStyle,
 }: SplashNativeProps) {
 	const logoScale = useSharedValue(1);
-	const logoGlow = useSharedValue(0.75);
+	const logoGlow = useSharedValue(0.85);
+
+	const ringScale = useSharedValue(0.9);
+	const ringOpacity = useSharedValue(0.5);
+
+	// Equalizer bar shared values for 5 pulsing soundwave bars
+	const bar1 = useSharedValue(12);
+	const bar2 = useSharedValue(24);
+	const bar3 = useSharedValue(36);
+	const bar4 = useSharedValue(20);
+	const bar5 = useSharedValue(14);
 
 	useEffect(() => {
 		logoScale.value = withRepeat(
-			withSequence(withTiming(1.06, { duration: 1200 }), withTiming(1, { duration: 1200 })),
+			withSequence(withTiming(1.05, { duration: 1000 }), withTiming(1, { duration: 1000 })),
 			-1,
 			true
 		);
 		logoGlow.value = withRepeat(
-			withSequence(withTiming(1, { duration: 1200 }), withTiming(0.75, { duration: 1200 })),
+			withSequence(withTiming(1, { duration: 1000 }), withTiming(0.85, { duration: 1000 })),
 			-1,
 			true
 		);
-	}, [logoGlow, logoScale]);
+
+		ringScale.value = withRepeat(
+			withSequence(withTiming(1.35, { duration: 1400 }), withTiming(0.9, { duration: 1400 })),
+			-1,
+			true
+		);
+		ringOpacity.value = withRepeat(
+			withSequence(withTiming(0.15, { duration: 1400 }), withTiming(0.5, { duration: 1400 })),
+			-1,
+			true
+		);
+
+		bar1.value = withRepeat(withSequence(withTiming(32, { duration: 400 }), withTiming(8, { duration: 400 })), -1, true);
+		bar2.value = withRepeat(withSequence(withTiming(14, { duration: 550 }), withTiming(38, { duration: 550 })), -1, true);
+		bar3.value = withRepeat(withSequence(withTiming(42, { duration: 350 }), withTiming(12, { duration: 350 })), -1, true);
+		bar4.value = withRepeat(withSequence(withTiming(10, { duration: 480 }), withTiming(34, { duration: 480 })), -1, true);
+		bar5.value = withRepeat(withSequence(withTiming(28, { duration: 380 }), withTiming(6, { duration: 380 })), -1, true);
+	}, [bar1, bar2, bar3, bar4, bar5, logoGlow, logoScale, ringOpacity, ringScale]);
 
 	const logoStyle = useAnimatedStyle(() => ({
 		transform: [{ scale: logoScale.value }],
 		opacity: logoGlow.value,
 	}));
+
+	const ringStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: ringScale.value }],
+		opacity: ringOpacity.value,
+	}));
+
+	const bar1Style = useAnimatedStyle(() => ({ height: bar1.value }));
+	const bar2Style = useAnimatedStyle(() => ({ height: bar2.value }));
+	const bar3Style = useAnimatedStyle(() => ({ height: bar3.value }));
+	const bar4Style = useAnimatedStyle(() => ({ height: bar4.value }));
+	const bar5Style = useAnimatedStyle(() => ({ height: bar5.value }));
 
 	return (
 		<Animated.View style={[styles.container, containerStyle]}>
@@ -73,13 +111,29 @@ export function SplashNative({
 				style={[styles.background, { backgroundColor: colors.background }, backgroundStyle]}
 			/>
 			<View style={styles.content}>
+				{/* Expanding Glowing Neon Aura Ring */}
+				<Animated.View
+					style={[
+						{
+							position: 'absolute',
+							width: 170,
+							height: 170,
+							borderRadius: 85,
+							backgroundColor: '#7C3AED',
+							filter: 'blur(30px)',
+						},
+						ringStyle,
+					]}
+				/>
+
 				<Animated.View style={[styles.iconWrapper, logoStyle]}>
 					<Image
 						source={require('@/assets/images/kur-logo.png')}
-						style={{ width: 124, height: 124, borderRadius: 24 }}
+						style={{ width: 140, height: 140 }}
 						resizeMode={'contain'}
 					/>
 				</Animated.View>
+
 				<Animated.View style={[styles.polygonWrapper, polygonContainerStyle]}>
 					<AnimatedPolygonView
 						segments={segments}
@@ -91,7 +145,17 @@ export function SplashNative({
 					/>
 				</Animated.View>
 			</View>
+
 			<Animated.View style={[styles.progressSection, progressSectionStyle]}>
+				{/* Pulsing Soundwave Equalizer Bars */}
+				<View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 5, marginBottom: 14, height: 44 }}>
+					<Animated.View style={[{ width: 4, borderRadius: 2, backgroundColor: '#7C3AED' }, bar1Style]} />
+					<Animated.View style={[{ width: 4, borderRadius: 2, backgroundColor: '#A855F7' }, bar2Style]} />
+					<Animated.View style={[{ width: 4, borderRadius: 2, backgroundColor: '#06B6D4' }, bar3Style]} />
+					<Animated.View style={[{ width: 4, borderRadius: 2, backgroundColor: '#10B981' }, bar4Style]} />
+					<Animated.View style={[{ width: 4, borderRadius: 2, backgroundColor: '#7C3AED' }, bar5Style]} />
+				</View>
+
 				<View style={[styles.progressTrack, { backgroundColor: colors.surfaceVariant }]}>
 					<Animated.View
 						style={[
