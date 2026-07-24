@@ -2,8 +2,10 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 
-const rawLogoPath = 'C:\\Users\\akhil\\.gemini\\antigravity\\brain\\15323128-592b-4f65-baca-353853e3c215\\kur_logo_transparent_1784908489581.jpg';
-const rawAppIconPath = 'C:\\Users\\akhil\\.gemini\\antigravity\\brain\\15323128-592b-4f65-baca-353853e3c215\\kur_app_icon_1784908505251.jpg';
+const rawLogoPath =
+	'C:\\Users\\akhil\\.gemini\\antigravity\\brain\\15323128-592b-4f65-baca-353853e3c215\\kur_logo_transparent_1784908489581.jpg';
+const rawAppIconPath =
+	'C:\\Users\\akhil\\.gemini\\antigravity\\brain\\15323128-592b-4f65-baca-353853e3c215\\kur_app_icon_1784908505251.jpg';
 
 const assetsDir = path.join(__dirname, '..', 'assets', 'images');
 
@@ -46,8 +48,12 @@ async function processLogo() {
 	// Output clean transparent PNGs for all app logo slots
 	await sharp(processedLogoBuffer).resize(512, 512).toFile(path.join(assetsDir, 'kur-logo.png'));
 	await sharp(processedLogoBuffer).resize(256, 256).toFile(path.join(assetsDir, 'kur-mark.png'));
-	await sharp(processedLogoBuffer).resize(512, 512).toFile(path.join(assetsDir, 'splash-icon.png'));
-	await sharp(processedLogoBuffer).resize(512, 512).toFile(path.join(assetsDir, 'android-icon-foreground.png'));
+	await sharp(processedLogoBuffer)
+		.resize(512, 512)
+		.toFile(path.join(assetsDir, 'splash-icon.png'));
+	await sharp(processedLogoBuffer)
+		.resize(512, 512)
+		.toFile(path.join(assetsDir, 'android-icon-foreground.png'));
 	await sharp(processedLogoBuffer).resize(64, 64).toFile(path.join(assetsDir, 'favicon.png'));
 
 	console.log('Transparent logo suite generated successfully!');
@@ -56,8 +62,14 @@ async function processLogo() {
 async function processAppIcon() {
 	console.log('Processing app launcher icons...');
 	await sharp(rawAppIconPath).resize(1024, 1024).png().toFile(path.join(assetsDir, 'icon.png'));
-	await sharp(rawAppIconPath).resize(1024, 1024).png().toFile(path.join(assetsDir, 'icon-rounded.png'));
-	await sharp(rawAppIconPath).resize(512, 512).png().toFile(path.join(assetsDir, 'android-icon-background.png'));
+	await sharp(rawAppIconPath)
+		.resize(1024, 1024)
+		.png()
+		.toFile(path.join(assetsDir, 'icon-rounded.png'));
+	await sharp(rawAppIconPath)
+		.resize(512, 512)
+		.png()
+		.toFile(path.join(assetsDir, 'android-icon-background.png'));
 	console.log('App launcher icons generated successfully!');
 }
 
