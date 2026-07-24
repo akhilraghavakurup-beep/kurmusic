@@ -67,6 +67,9 @@ jobs:
                     const fs = require('fs');
                     const app = JSON.parse(fs.readFileSync('app.json', 'utf8'));
                     app.expo.version = '$VERSION';
+                    if (app.expo.android) {
+                      app.expo.android.versionCode = (app.expo.android.versionCode || 1) + 1;
+                    }
                     fs.writeFileSync('app.json', JSON.stringify(app, null, 2) + '\n');
                   "
                   # Format modified files with Prettier
