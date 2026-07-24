@@ -38,6 +38,11 @@ vi.mock('@infrastructure/filesystem/download-manager', () => ({
 	}),
 	deleteAudioFile: vi.fn().mockResolvedValue({ success: true, data: undefined }),
 	deleteDownloadDirectory: vi.fn().mockResolvedValue({ success: true, data: undefined }),
+	deleteInternalDownloadBundle: vi.fn().mockResolvedValue({ success: true, data: undefined }),
+	writeInternalDownloadMetadata: vi.fn().mockResolvedValue({
+		success: true,
+		data: { metadataFilePath: '/downloads/test/metadata.json' },
+	}),
 	getFileInfo: vi.fn().mockResolvedValue({ exists: true, size: 1024 }),
 }));
 

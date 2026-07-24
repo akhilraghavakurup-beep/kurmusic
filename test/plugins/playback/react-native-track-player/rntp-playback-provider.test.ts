@@ -18,6 +18,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // hoisted mock is registered before any transitive import triggers a parse.
 // ---------------------------------------------------------------------------
 vi.mock('react-native', () => ({
+	TurboModuleRegistry: {
+		get: vi.fn(),
+		getEnforcing: vi.fn(),
+	},
 	AppState: {
 		currentState: 'active',
 		addEventListener: vi.fn(() => ({ remove: vi.fn() })),

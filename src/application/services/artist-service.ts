@@ -108,18 +108,15 @@ export class ArtistService {
 
 				logger.debug(`Fetching artist ${idToUse} from ${provider.manifest.id}`);
 
-				const isNumericId = /^\d+$/.test(idToUse);
-				let artistInfoResult =
-					isNumericId && provider.hasCapability('get-artist-info')
-						? await provider.getArtistInfo(idToUse)
-						: {
-								success: false as const,
-								error: new Error('Invalid or non-numeric ID'),
-							};
+				let artistInfoResult = provider.hasCapability('get-artist-info')
+					? await provider.getArtistInfo(idToUse)
+					: {
+							success: false as const,
+							error: new Error('Provider does not support get-artist-info'),
+						};
 				let artistFromSearch: Artist | null = null;
 
-				const queryName =
-					fallbackName || (!isNumericId ? idToUse.replace(/-/g, ' ') : undefined);
+				const queryName = fallbackName || idToUse.replace(/-/g, ' ');
 
 				if (
 					!artistInfoResult.success &&
@@ -142,8 +139,7 @@ export class ArtistService {
 							);
 							idToUse = cleanMatchedId;
 
-							const isNumericMatchedId = /^\d+$/.test(idToUse);
-							if (isNumericMatchedId && provider.hasCapability('get-artist-info')) {
+							if (provider.hasCapability('get-artist-info')) {
 								artistInfoResult = await provider.getArtistInfo(idToUse);
 							}
 						}

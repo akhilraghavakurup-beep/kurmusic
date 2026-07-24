@@ -40,9 +40,18 @@ function createMockProvider(id: string, overrides: Record<string, unknown> = {})
 			if (cap === 'get-artist-albums') return true;
 			return false;
 		}),
-		searchTracks: vi.fn(),
-		searchAlbums: vi.fn(),
-		searchArtists: vi.fn(),
+		searchTracks: vi.fn().mockResolvedValue({
+			success: true,
+			data: { items: [], total: 0, offset: 0, limit: 10, hasMore: false },
+		}),
+		searchAlbums: vi.fn().mockResolvedValue({
+			success: true,
+			data: { items: [], total: 0, offset: 0, limit: 10, hasMore: false },
+		}),
+		searchArtists: vi.fn().mockResolvedValue({
+			success: true,
+			data: { items: [], total: 0, offset: 0, limit: 10, hasMore: false },
+		}),
 		getAlbumInfo: vi.fn(),
 		getAlbumTracks: vi.fn(),
 		getArtistInfo: vi.fn().mockResolvedValue({
@@ -112,6 +121,7 @@ describe('ArtistService', () => {
 			service.setMetadataProviders([provider]);
 
 			const result = await service.getArtistDetail('youtube-music:artist-1');
+			if (!result.success) console.log('ARTIST_TEST_ERROR:', result.error);
 
 			expect(result.success).toBe(true);
 			if (result.success) {

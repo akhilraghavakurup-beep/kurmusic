@@ -1,6 +1,42 @@
+// Define global __DEV__ for React Native / Expo environment
+(globalThis as any).__DEV__ = true;
+(global as any).__DEV__ = true;
+try {
+	Object.defineProperty(globalThis, '__DEV__', {
+		value: true,
+		configurable: true,
+		writable: true,
+	});
+	Object.defineProperty(global, '__DEV__', { value: true, configurable: true, writable: true });
+} catch {}
+
 import { vi, beforeAll, afterAll } from 'vitest';
 
+class MockNativeModule {}
+class MockSharedObject {}
+class MockEventEmitter {
+	addListener() {
+		return { remove: () => {} };
+	}
+	removeListener() {}
+	removeAllListeners() {}
+	emit() {}
+}
+
+(globalThis as any).expo = (globalThis as any).expo || {
+	EventEmitter: MockEventEmitter,
+	NativeModule: MockNativeModule,
+	SharedObject: MockSharedObject,
+	modules: {},
+};
+(globalThis as any).ExpoModulesCore = (globalThis as any).expo;
+(globalThis as any).ExpoGlobal = (globalThis as any).expo;
+
 vi.mock('react-native', () => ({
+	TurboModuleRegistry: {
+		get: vi.fn(),
+		getEnforcing: vi.fn(),
+	},
 	Platform: {
 		OS: 'ios',
 		select: vi.fn((obj: Record<string, unknown>) => obj.ios),
@@ -49,6 +85,10 @@ vi.mock('expo-router', () => ({
 	Stack: {
 		Screen: 'Stack.Screen',
 	},
+}));
+
+vi.mock('expo-document-picker', () => ({
+	getDocumentAsync: vi.fn().mockResolvedValue({ canceled: true, assets: [] }),
 }));
 
 vi.mock('@react-native-cookies/cookies', () => ({
