@@ -59,6 +59,8 @@ export const CORE_ACTION_IDS = {
 	SLEEP_TIMER: 'sleep-timer',
 	VIEW_QUEUE: 'view-queue',
 	EDIT_TAGS: 'edit-tags',
+	VIEW_LYRICS: 'view-lyrics',
+	TOGGLE_LYRICS: 'toggle-lyrics',
 } as const;
 
 export type CoreActionId = (typeof CORE_ACTION_IDS)[keyof typeof CORE_ACTION_IDS];

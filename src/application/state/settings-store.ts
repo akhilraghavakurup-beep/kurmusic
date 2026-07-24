@@ -405,6 +405,9 @@ export const useSettingsStore = create<SettingsState>()(
 					customDownloadDirectoryName: null,
 				});
 			},
+			setSkippedUpdateVersion: (version: string | null) => {
+				set({ skippedUpdateVersion: version });
+			},
 			resetAllSettings: async () => {
 				const defaults = [...DEFAULT_HOME_CONTENT_PREFERENCES];
 				set({
