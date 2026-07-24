@@ -87,9 +87,7 @@ export function AutoUpdateDialog() {
 			setLocalApkUri(localUri);
 			setUpdateState('ready');
 		} catch (err) {
-			setErrorMessage(
-				err instanceof Error ? err.message : 'Download failed.'
-			);
+			setErrorMessage(err instanceof Error ? err.message : 'Download failed.');
 			setUpdateState('error');
 			return;
 		}
@@ -107,9 +105,7 @@ export function AutoUpdateDialog() {
 		try {
 			await triggerUpdateInstall(localApkUri, updateInfo?.downloadUrl);
 		} catch (err) {
-			setErrorMessage(
-				err instanceof Error ? err.message : 'Installation failed.'
-			);
+			setErrorMessage(err instanceof Error ? err.message : 'Installation failed.');
 			setUpdateState('error');
 		}
 	}, [localApkUri, updateInfo]);
