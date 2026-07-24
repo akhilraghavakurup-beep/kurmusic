@@ -99,9 +99,7 @@ export function AutoUpdateDialog() {
 		try {
 			await triggerUpdateInstall(localApkUri);
 		} catch (err) {
-			setErrorMessage(
-				err instanceof Error ? err.message : 'Installation failed.'
-			);
+			setErrorMessage(err instanceof Error ? err.message : 'Installation failed.');
 			setUpdateState('error');
 		}
 	}, [localApkUri]);
@@ -228,7 +226,8 @@ export function AutoUpdateDialog() {
 						<View style={styles.errorBox}>
 							<Icon as={AlertCircleIcon} size={20} color={colors.error} />
 							<Text variant={'bodySmall'} style={{ color: colors.error, flex: 1 }}>
-								{errorMessage || 'Download failed. Please check internet connection and try again.'}
+								{errorMessage ||
+									'Download failed. Please check internet connection and try again.'}
 							</Text>
 						</View>
 					)}
@@ -274,7 +273,11 @@ export function AutoUpdateDialog() {
 								<Button
 									mode={'contained'}
 									icon={() => (
-										<Icon as={DownloadIcon} size={16} color={colors.onPrimary} />
+										<Icon
+											as={DownloadIcon}
+											size={16}
+											color={colors.onPrimary}
+										/>
 									)}
 									onPress={handleUpdateNow}
 									textColor={colors.onPrimary}

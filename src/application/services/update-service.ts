@@ -120,7 +120,9 @@ export async function downloadUpdateApk(
 			(progressData) => {
 				const progress =
 					progressData.totalBytesWritten / progressData.totalBytesExpectedToWrite;
-				onProgress(isNaN(progress) || !isFinite(progress) ? 0 : Math.max(0, Math.min(1, progress)));
+				onProgress(
+					isNaN(progress) || !isFinite(progress) ? 0 : Math.max(0, Math.min(1, progress))
+				);
 			}
 		);
 

@@ -13,4 +13,3 @@ export async function canInstallApk(): Promise<boolean> {
 export async function openUnknownAppSourcesSettings(): Promise<boolean> {
 	return await ApkInstaller.openUnknownAppSourcesSettings();
 }
-
