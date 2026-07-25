@@ -2,8 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useHistoryStore } from '../../application/state/history-store';
-import { usePlaybackService } from '../../application/services/playback-service';
-import { getArtworkUrl } from '../../shared/mappers/artwork-mapper';
+import { playbackService } from '../../application/services/playback-service';
+import { getBestArtwork } from '../../domain/value-objects/artwork';
+import type { Track } from '../../domain/entities/track';
 
 interface KurRewindModalProps {
 	visible: boolean;
@@ -12,7 +13,6 @@ interface KurRewindModalProps {
 
 export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose }) => {
 	const historyStore = useHistoryStore();
-	const playbackService = usePlaybackService();
 
 	const topTracks = historyStore.getTopTracks(10);
 	const topArtists = historyStore.getTopArtists(6);
@@ -23,14 +23,14 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 			await playbackService.playTrack(topTracks[0], topTracks);
 			onClose();
 		}
-	}, [topTracks, playbackService, onClose]);
+	}, [topTracks, onClose]);
 
 	const handlePlayTrack = React.useCallback(
-		async (track: (typeof topTracks)[0]) => {
+		async (track: Track) => {
 			await playbackService.playTrack(track, topTracks);
 			onClose();
 		},
-		[topTracks, playbackService, onClose]
+		[topTracks, onClose]
 	);
 
 	return (
@@ -80,8 +80,8 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 								showsHorizontalScrollIndicator={false}
 								style={styles.artistsRow}
 							>
-								{topArtists.map((artist, idx) => {
-									const imgUrl = getArtworkUrl(artist.artwork);
+								{topArtists.map((artist: { name: string; count: number; artwork?: any }, idx: number) => {
+									const imgUrl = getBestArtwork(artist.artwork)?.url;
 									return (
 										<View key={artist.name + idx} style={styles.artistCard}>
 											{imgUrl ? (
@@ -111,8 +111,8 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 					{topTracks.length > 0 && (
 						<View style={styles.section}>
 							<Text style={styles.sectionTitle}>Most Played Tracks</Text>
-							{topTracks.map((track, index) => {
-								const imgUrl = getArtworkUrl(track.artwork);
+							{topTracks.map((track: Track, index: number) => {
+								const imgUrl = getBestArtwork(track.artwork)?.url;
 								return (
 									<TouchableOpacity
 										key={track.id.value + index}

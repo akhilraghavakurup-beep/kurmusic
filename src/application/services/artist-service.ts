@@ -164,7 +164,7 @@ export class ArtistService {
 
 				let stationTracks: Track[] = [];
 				if (this._hasArtistStationTracks(provider)) {
-					const stationName = artist?.name || queryName || rawId;
+					const stationName = artist?.name || queryName || rawId || 'Radio Station';
 					const stationResult = await provider.getArtistStationTracks(
 						idToUse,
 						stationName,
@@ -185,7 +185,7 @@ export class ArtistService {
 					(stationTracks.length > 0
 						? {
 								id: artistId,
-								name: queryName || rawId,
+								name: queryName || rawId || 'Radio Station',
 								bio: 'Live Radio Station',
 								artwork: stationTracks[0]?.artwork,
 							}

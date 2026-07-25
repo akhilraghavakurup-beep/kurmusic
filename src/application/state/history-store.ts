@@ -50,6 +50,9 @@ interface HistoryState {
 	removeFromHistory: (trackId: string) => void;
 
 	getRecentTracks: (limit?: number) => Track[];
+	getTopTracks: (limit?: number) => Track[];
+	getTopArtists: (limit?: number) => { name: string; count: number; artwork?: any }[];
+	getTotalListenedTimeMinutes: () => number;
 }
 
 const MAX_HISTORY_SIZE = 50;

@@ -6,7 +6,7 @@ import Animated, {
 	withRepeat,
 	withSequence,
 	withTiming,
-	easing,
+	Easing,
 } from 'react-native-reanimated';
 
 interface SoundwaveVisualizerProps {
@@ -26,8 +26,8 @@ const VisualizerBar: React.FC<{ isPlaying: boolean; delay: number; color: string
 		if (isPlaying) {
 			height.value = withRepeat(
 				withSequence(
-					withTiming(24, { duration: 300 + delay, easing: easing.inOut(easing.ease) }),
-					withTiming(6, { duration: 300 + delay, easing: easing.inOut(easing.ease) })
+					withTiming(24, { duration: 300 + delay, easing: Easing.inOut(Easing.ease) }),
+					withTiming(6, { duration: 300 + delay, easing: Easing.inOut(Easing.ease) })
 				),
 				-1,
 				true
