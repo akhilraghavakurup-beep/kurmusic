@@ -165,7 +165,11 @@ export class ArtistService {
 				let stationTracks: Track[] = [];
 				if (this._hasArtistStationTracks(provider)) {
 					const stationName = artist?.name || queryName || rawId;
-					const stationResult = await provider.getArtistStationTracks(idToUse, stationName, 25);
+					const stationResult = await provider.getArtistStationTracks(
+						idToUse,
+						stationName,
+						25
+					);
 					if (stationResult.success) {
 						stationTracks = stationResult.data;
 					}
@@ -194,7 +198,13 @@ export class ArtistService {
 					albums,
 				};
 
-				store.setArtistDetail(artistId, finalArtist, result.topTracks, stationTracks, albums);
+				store.setArtistDetail(
+					artistId,
+					finalArtist,
+					result.topTracks,
+					stationTracks,
+					albums
+				);
 				return ok(result);
 			} catch (error) {
 				logger.warn(
