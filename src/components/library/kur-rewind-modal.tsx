@@ -26,31 +26,39 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 	const topArtists = historyStore.getTopArtists(6);
 	const totalMinutes = historyStore.getTotalListenedTimeMinutes();
 
-	const handlePlayDailyMix = async () => {
+	const handlePlayDailyMix = React.useCallback(async () => {
 		if (topTracks.length > 0) {
 			await playbackService.playTrack(topTracks[0], topTracks);
 			onClose();
 		}
-	};
+	}, [topTracks, playbackService, onClose]);
+
+	const handlePlayTrack = React.useCallback(
+		async (track: (typeof topTracks)[0]) => {
+			await playbackService.playTrack(track, topTracks);
+			onClose();
+		},
+		[topTracks, playbackService, onClose]
+	);
 
 	return (
-		<Modal visible={visible} animationType="slide" transparent={false} onRequestClose={onClose}>
+		<Modal visible={visible} animationType={'slide'} transparent={false} onRequestClose={onClose}>
 			<View style={styles.container}>
 				{/* Header */}
 				<View style={styles.header}>
 					<View style={styles.headerTitleRow}>
-						<Ionicons name="sparkles" size={24} color="#8A2BE2" />
+						<Ionicons name={'sparkles'} size={24} color={'#8A2BE2'} />
 						<Text style={styles.headerTitle}>Kur Rewind</Text>
 					</View>
 					<TouchableOpacity onPress={onClose} style={styles.closeButton}>
-						<Ionicons name="close" size={24} color="#FFFFFF" />
+						<Ionicons name={'close'} size={24} color={'#FFFFFF'} />
 					</TouchableOpacity>
 				</View>
 
 				<ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 					{/* Stat Card 1: Total Minutes */}
 					<View style={styles.heroCard}>
-						<Ionicons name="headset-outline" size={32} color="#A855F7" />
+						<Ionicons name={'headset-outline'} size={32} color={'#A855F7'} />
 						<Text style={styles.heroStatNumber}>{totalMinutes}</Text>
 						<Text style={styles.heroStatLabel}>Minutes of Music Listened</Text>
 					</View>
@@ -58,7 +66,7 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 					{/* Action: Generate Daily Mix */}
 					{topTracks.length > 0 && (
 						<TouchableOpacity style={styles.dailyMixButton} onPress={handlePlayDailyMix}>
-							<Ionicons name="play-circle" size={28} color="#FFFFFF" />
+							<Ionicons name={'play-circle'} size={28} color={'#FFFFFF'} />
 							<View style={styles.dailyMixTextCol}>
 								<Text style={styles.dailyMixTitle}>Play Your Daily Mix</Text>
 								<Text style={styles.dailyMixSubtitle}>
@@ -81,7 +89,7 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 												<Image source={{ uri: imgUrl }} style={styles.artistAvatar} />
 											) : (
 												<View style={[styles.artistAvatar, styles.placeholderAvatar]}>
-													<Ionicons name="person" size={28} color="#94A3B8" />
+													<Ionicons name={'person'} size={28} color={'#94A3B8'} />
 												</View>
 											)}
 											<Text style={styles.artistName} numberOfLines={1}>
@@ -105,17 +113,14 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 									<TouchableOpacity
 										key={track.id.value + index}
 										style={styles.trackRow}
-										onPress={async () => {
-											await playbackService.playTrack(track, topTracks);
-											onClose();
-										}}
+										onPress={() => handlePlayTrack(track)}
 									>
 										<Text style={styles.trackRank}>#{index + 1}</Text>
 										{imgUrl ? (
 											<Image source={{ uri: imgUrl }} style={styles.trackThumb} />
 										) : (
 											<View style={[styles.trackThumb, styles.placeholderAvatar]}>
-												<Ionicons name="musical-notes" size={20} color="#94A3B8" />
+												<Ionicons name={'musical-notes'} size={20} color={'#94A3B8'} />
 											</View>
 										)}
 										<View style={styles.trackInfo}>

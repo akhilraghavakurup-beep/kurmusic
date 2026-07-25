@@ -124,7 +124,7 @@ export default function HomeScreen() {
 			{tabIndex === 0 && (
 				<View style={styles.fabRow}>
 					<TouchableOpacity style={styles.rewindFab} onPress={() => setIsRewindOpen(true)}>
-						<Ionicons name="sparkles" size={20} color="#FFFFFF" />
+						<Ionicons name={'sparkles'} size={20} color={'#FFFFFF'} />
 						<Text style={styles.rewindFabText}>Rewind</Text>
 					</TouchableOpacity>
 					<SortFilterFAB filterCount={filterCount} onPress={openFilterSheet} />
