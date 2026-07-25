@@ -34,7 +34,12 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 	);
 
 	return (
-		<Modal visible={visible} animationType={'slide'} transparent={false} onRequestClose={onClose}>
+		<Modal
+			visible={visible}
+			animationType={'slide'}
+			transparent={false}
+			onRequestClose={onClose}
+		>
 			<View style={styles.container}>
 				{/* Header */}
 				<View style={styles.header}>
@@ -60,7 +65,10 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 
 					{/* Action: Generate Daily Mix */}
 					{topTracks.length > 0 && (
-						<TouchableOpacity style={styles.dailyMixButton} onPress={handlePlayDailyMix}>
+						<TouchableOpacity
+							style={styles.dailyMixButton}
+							onPress={handlePlayDailyMix}
+						>
 							<Ionicons name={'play-circle'} size={28} color={'#FFFFFF'} />
 							<View style={styles.dailyMixTextCol}>
 								<Text style={styles.dailyMixTitle}>Play Your Daily Mix</Text>
@@ -90,8 +98,17 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 													style={styles.artistAvatar}
 												/>
 											) : (
-												<View style={[styles.artistAvatar, styles.placeholderAvatar]}>
-													<Ionicons name={'person'} size={28} color={'#94A3B8'} />
+												<View
+													style={[
+														styles.artistAvatar,
+														styles.placeholderAvatar,
+													]}
+												>
+													<Ionicons
+														name={'person'}
+														size={28}
+														color={'#94A3B8'}
+													/>
 												</View>
 											)}
 											<Text style={styles.artistName} numberOfLines={1}>
@@ -126,8 +143,17 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 												style={styles.trackThumb}
 											/>
 										) : (
-											<View style={[styles.trackThumb, styles.placeholderAvatar]}>
-												<Ionicons name={'musical-notes'} size={20} color={'#94A3B8'} />
+											<View
+												style={[
+													styles.trackThumb,
+													styles.placeholderAvatar,
+												]}
+											>
+												<Ionicons
+													name={'musical-notes'}
+													size={20}
+													color={'#94A3B8'}
+												/>
 											</View>
 										)}
 										<View style={styles.trackInfo}>
