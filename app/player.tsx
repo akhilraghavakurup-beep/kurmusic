@@ -26,6 +26,7 @@ import {
 } from 'lucide-react-native';
 import { PlayerControls } from '@/src/components/player/player-controls';
 import { ProgressBar } from '@/src/components/player/progress-bar';
+import { SoundwaveVisualizer } from '@/src/components/player/soundwave-visualizer';
 import { TrackOptionsMenu } from '@/src/components/track-options-menu';
 import { PlayerThemeProvider, usePlayerTheme } from '@/src/components/player/player-theme-context';
 import { getLargestArtwork } from '@/src/domain/value-objects/artwork';
@@ -37,7 +38,7 @@ import { useLibraryStore, useIsFavorite } from '@/src/application/state/library-
 import { useCurrentTrack, usePlayerError } from '@/src/application/state/player-store';
 import { useIsDownloaded, useIsDownloading } from '@/src/application/state/download-store';
 import { useDownloadActions } from '@/src/hooks/use-download-actions';
-import { usePlayerActions } from '@/src/hooks/use-player';
+import { usePlayer, usePlayerActions } from '@/src/hooks/use-player';
 import { usePreferredStreamQuality } from '@/src/application/state/settings-store';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -88,6 +89,7 @@ function PlayerScreenContent() {
 	const { colors, backgroundStyle, dominantColor } = usePlayerTheme();
 	const openQueueSheet = usePlayerUIStore((s) => s.openQueueSheet);
 	const [artworkLoaded, setArtworkLoaded] = useState(false);
+	const { isPlaying } = usePlayer();
 	const { skipToNext, skipToPrevious } = usePlayerActions();
 
 	const trackId = currentTrack?.id.value ?? '';
@@ -252,6 +254,11 @@ function PlayerScreenContent() {
 								)}
 							</View>
 						</Animated.View>
+
+						{/* Audio Soundwave Spectrum Visualizer */}
+						<View style={{ marginVertical: 8 }}>
+							<SoundwaveVisualizer isPlaying={isPlaying} color={colors.primary} />
+						</View>
 
 						<Animated.View
 							entering={FadeInUp.duration(320).delay(120)}

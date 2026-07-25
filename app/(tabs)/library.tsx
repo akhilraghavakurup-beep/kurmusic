@@ -1,4 +1,5 @@
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Freeze } from 'react-freeze';
 import { TabsProvider, Tabs, TabScreen } from 'react-native-paper-tabs';
 import { PageLayout } from '@/src/components/ui/page-layout';
@@ -13,6 +14,7 @@ import {
 	AlbumList,
 	LibrarySortFilterSheet,
 } from '@/src/components/library';
+import { KurRewindModal } from '@/src/components/library/kur-rewind-modal';
 import { SortFilterFAB } from '@/src/components/sort-filter';
 import { useLibraryFilter } from '@/src/hooks/use-library-filter';
 import { useTabShadow } from '@/src/hooks/use-tab-shadow';
@@ -23,6 +25,7 @@ export default function HomeScreen() {
 	const { colors } = useAppTheme();
 	const defaultLibraryTab = useDefaultLibraryTab();
 	const [tabIndex, setTabIndex] = useState(TAB_INDEX_MAP[defaultLibraryTab]);
+	const [isRewindOpen, setIsRewindOpen] = useState(false);
 	const hasAppliedDefaultRef = useRef(false);
 
 	useEffect(() => {
@@ -119,9 +122,16 @@ export default function HomeScreen() {
 			</View>
 
 			{tabIndex === 0 && (
-				<SortFilterFAB filterCount={filterCount} onPress={openFilterSheet} />
+				<View style={styles.fabRow}>
+					<TouchableOpacity style={styles.rewindFab} onPress={() => setIsRewindOpen(true)}>
+						<Ionicons name="sparkles" size={20} color="#FFFFFF" />
+						<Text style={styles.rewindFabText}>Rewind</Text>
+					</TouchableOpacity>
+					<SortFilterFAB filterCount={filterCount} onPress={openFilterSheet} />
+				</View>
 			)}
 
+			<KurRewindModal visible={isRewindOpen} onClose={() => setIsRewindOpen(false)} />
 			<LibrarySortFilterSheet isOpen={isFilterSheetOpen} onClose={closeFilterSheet} />
 		</PageLayout>
 	);
@@ -134,5 +144,32 @@ const styles = StyleSheet.create({
 	tabContent: {
 		flex: 1,
 		paddingHorizontal: 16,
+	},
+	fabRow: {
+		position: 'absolute',
+		bottom: 16,
+		right: 16,
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 10,
+	},
+	rewindFab: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		backgroundColor: '#8A2BE2',
+		paddingHorizontal: 14,
+		paddingVertical: 10,
+		borderRadius: 24,
+		gap: 6,
+		elevation: 4,
+		shadowColor: '#8A2BE2',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.3,
+		shadowRadius: 4,
+	},
+	rewindFabText: {
+		fontSize: 14,
+		fontWeight: '700',
+		color: '#FFFFFF',
 	},
 });

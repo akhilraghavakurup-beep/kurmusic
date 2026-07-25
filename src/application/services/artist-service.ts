@@ -153,11 +153,6 @@ export class ArtistService {
 							data: { items: [], offset: 0, limit: 0, hasMore: false },
 						};
 
-				if (!artistInfoResult.success && !albumsResult.success) {
-					logger.warn(`Failed to fetch artist data from ${provider.manifest.id}`);
-					continue;
-				}
-
 				const artist = artistInfoResult.success ? artistInfoResult.data : artistFromSearch;
 				const albums = albumsResult.success ? albumsResult.data.items : [];
 				const topTracks =
@@ -166,21 +161,40 @@ export class ArtistService {
 								.searchTracks(artist.name, { limit: 10 })
 								.then((result) => (result.success ? result.data.items : []))
 						: [];
-				const stationTracks =
-					artist && this._hasArtistStationTracks(provider)
-						? await provider
-								.getArtistStationTracks(idToUse, artist.name, 15)
-								.then((result) => (result.success ? result.data : []))
-						: [];
+
+				let stationTracks: Track[] = [];
+				if (this._hasArtistStationTracks(provider)) {
+					const stationName = artist?.name || queryName || rawId;
+					const stationResult = await provider.getArtistStationTracks(idToUse, stationName, 25);
+					if (stationResult.success) {
+						stationTracks = stationResult.data;
+					}
+				}
+
+				if (!artist && albums.length === 0 && stationTracks.length === 0) {
+					logger.warn(`Failed to fetch artist data from ${provider.manifest.id}`);
+					continue;
+				}
+
+				const finalArtist: Artist | null =
+					artist ??
+					(stationTracks.length > 0
+						? {
+								id: artistId,
+								name: queryName || rawId,
+								bio: 'Live Radio Station',
+								artwork: stationTracks[0]?.artwork,
+							}
+						: null);
 
 				const result: ArtistDetailResult = {
-					artist,
-					topTracks,
+					artist: finalArtist,
+					topTracks: topTracks.length > 0 ? topTracks : stationTracks,
 					stationTracks,
 					albums,
 				};
 
-				store.setArtistDetail(artistId, artist, topTracks, stationTracks, albums);
+				store.setArtistDetail(artistId, finalArtist, result.topTracks, stationTracks, albums);
 				return ok(result);
 			} catch (error) {
 				logger.warn(

@@ -166,15 +166,35 @@ jobs:
               run: |
                   mv artifacts/release/app-release.apk artifacts/kurmusic-${{ needs.validate.outputs.version }}-release.apk
 
+            - name: Extract Release Notes from CHANGELOG.md
+              id: changelog_notes
+              run: |
+                  node -e "
+                  const fs = require('fs');
+                  const version = '${{ needs.validate.outputs.version }}';
+                  try {
+                    const text = fs.readFileSync('CHANGELOG.md', 'utf8');
+                    const regex = new RegExp('## \\\\[?' + version.replace('.', '\\\\.') + '\\\\]?[^\\\\n]*\\\\n([\\\\s\\\\S]*?)(?=\\\\n## |$)');
+                    const match = text.match(regex);
+                    const notes = match ? match[1].trim() : '';
+                    fs.writeFileSync('RELEASE_NOTES.txt', notes);
+                  } catch (e) {
+                    fs.writeFileSync('RELEASE_NOTES.txt', '');
+                  }
+                  "
+                  if [ -s RELEASE_NOTES.txt ]; then
+                    echo "notes<<EOF" >> $GITHUB_OUTPUT
+                    cat RELEASE_NOTES.txt >> $GITHUB_OUTPUT
+                    echo "EOF" >> $GITHUB_OUTPUT
+                  fi
+
             - name: Create GitHub Release
               uses: softprops/action-gh-release@v2
               with:
                   tag_name: v${{ needs.validate.outputs.version }}
                   name: Release v${{ needs.validate.outputs.version }}
                   body: |
-                      ## Update Notes (OTA)
-
-                      ${{ github.event.inputs.release_notes || 'Bug fixes and performance improvements.' }}
+                      ${{ steps.changelog_notes.outputs.notes || github.event.inputs.release_notes || 'Bug fixes and performance improvements.' }}
 
                       ## Downloads
 

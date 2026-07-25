@@ -2,6 +2,20 @@
 
 All notable changes to the Kur Music application are documented in this file.
 
+## [1.2.1] - 2026-07-25
+
+### 📊 "Kur Rewind" & Local Listening Statistics Dashboard
+- **Personalized Listening Analytics**: Added a visual **"Kur Rewind"** dashboard in the Library tab displaying total minutes listened, top played artists carousel, and most played songs ranking.
+- **"Your Daily Mix" Generator**: Added a one-tap action to queue up your top played tracks into a fresh live mix.
+
+### 🌊 Soundwave Spectrum Visualizer & Glassmorphism Aesthetics
+- **Animated Audio Visualizer**: Added an animated 9-bar soundwave visualizer directly beneath the album cover on the Now Playing screen (`SoundwaveVisualizer`).
+- **Dynamic Artwork Palette Extraction**: Updated player theme context to smoothly adapt primary accents and background gradient tints to the active track's artwork colors.
+
+### 📻 Universal Radio Resolution & Automated Changelogs
+- **Featured & Artist Radio Resolution**: Fixed radio track fetching so tapping any Featured Radio station or Artist Radio card resolves all 25 live streaming tracks.
+- **Automated OTA Release Notes**: Configured GitHub Actions to automatically extract version release notes from `CHANGELOG.md` and display them inside the app's OTA update dialog.
+
 ## [1.2.0] - 2026-07-25
 
 ### 📻 Radio Feature Overhaul & Language-Tuned Featured Stations

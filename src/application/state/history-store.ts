@@ -93,6 +93,54 @@ export const useHistoryStore = create<HistoryState>()(
 				const state = get();
 				return state.recentlyPlayed.slice(0, limit).map((entry) => entry.track);
 			},
+
+			getTopTracks: (limit = 10) => {
+				const state = get();
+				const countMap = new Map<string, { track: Track; count: number }>();
+				for (const entry of state.recentlyPlayed) {
+					const id = getTrackIdString(entry.track.id);
+					const existing = countMap.get(id);
+					if (existing) {
+						existing.count += 1;
+					} else {
+						countMap.set(id, { track: entry.track, count: 1 });
+					}
+				}
+				return Array.from(countMap.values())
+					.sort((a, b) => b.count - a.count)
+					.slice(0, limit)
+					.map((item) => item.track);
+			},
+
+			getTopArtists: (limit = 10) => {
+				const state = get();
+				const artistMap = new Map<string, { name: string; count: number; artwork?: any }>();
+				for (const entry of state.recentlyPlayed) {
+					const artistName = entry.track.artists?.[0]?.name || 'Unknown Artist';
+					const existing = artistMap.get(artistName);
+					if (existing) {
+						existing.count += 1;
+					} else {
+						artistMap.set(artistName, {
+							name: artistName,
+							count: 1,
+							artwork: entry.track.artwork,
+						});
+					}
+				}
+				return Array.from(artistMap.values())
+					.sort((a, b) => b.count - a.count)
+					.slice(0, limit);
+			},
+
+			getTotalListenedTimeMinutes: () => {
+				const state = get();
+				let totalMs = 0;
+				for (const entry of state.recentlyPlayed) {
+					totalMs += entry.track.duration.totalMilliseconds;
+				}
+				return Math.round(totalMs / 60000);
+			},
 		}),
 		{
 			name: 'aria-history-storage',
