@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useHistoryStore } from '../../application/state/history-store';
+import { usePlayerStore } from '../../application/state/player-store';
 import { playbackService } from '../../application/services/playback-service';
 import { getBestArtwork } from '../../domain/value-objects/artwork';
 import type { Track } from '../../domain/entities/track';
@@ -20,14 +21,17 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 
 	const handlePlayDailyMix = React.useCallback(async () => {
 		if (topTracks.length > 0) {
-			await playbackService.playTrack(topTracks[0], topTracks);
+			usePlayerStore.getState().setQueue(topTracks, 0);
+			await playbackService.play(topTracks[0]);
 			onClose();
 		}
 	}, [topTracks, onClose]);
 
 	const handlePlayTrack = React.useCallback(
 		async (track: Track) => {
-			await playbackService.playTrack(track, topTracks);
+			const index = topTracks.findIndex((t) => t.id.value === track.id.value);
+			usePlayerStore.getState().setQueue(topTracks, index >= 0 ? index : 0);
+			await playbackService.play(track);
 			onClose();
 		},
 		[topTracks, onClose]
