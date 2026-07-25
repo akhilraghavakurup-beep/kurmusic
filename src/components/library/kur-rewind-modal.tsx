@@ -92,38 +92,43 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 								showsHorizontalScrollIndicator={false}
 								style={styles.artistsRow}
 							>
-								{topArtists.map((artist: { name: string; count: number; artwork?: any }, idx: number) => {
-									const imgUrl = getBestArtwork(artist.artwork)?.url;
-									return (
-										<View key={artist.name + idx} style={styles.artistCard}>
-											{imgUrl ? (
-												<Image
-													source={{ uri: imgUrl }}
-													style={styles.artistAvatar}
-												/>
-											) : (
-												<View
-													style={[
-														styles.artistAvatar,
-														styles.placeholderAvatar,
-													]}
-												>
-													<Ionicons
-														name={'person'}
-														size={28}
-														color={'#94A3B8'}
+								{topArtists.map(
+									(
+										artist: { name: string; count: number; artwork?: any },
+										idx: number
+									) => {
+										const imgUrl = getBestArtwork(artist.artwork)?.url;
+										return (
+											<View key={artist.name + idx} style={styles.artistCard}>
+												{imgUrl ? (
+													<Image
+														source={{ uri: imgUrl }}
+														style={styles.artistAvatar}
 													/>
-												</View>
-											)}
-											<Text style={styles.artistName} numberOfLines={1}>
-												{artist.name}
-											</Text>
-											<Text style={styles.artistBadge}>
-												{artist.count} plays
-											</Text>
-										</View>
-									);
-								})}
+												) : (
+													<View
+														style={[
+															styles.artistAvatar,
+															styles.placeholderAvatar,
+														]}
+													>
+														<Ionicons
+															name={'person'}
+															size={28}
+															color={'#94A3B8'}
+														/>
+													</View>
+												)}
+												<Text style={styles.artistName} numberOfLines={1}>
+													{artist.name}
+												</Text>
+												<Text style={styles.artistBadge}>
+													{artist.count} plays
+												</Text>
+											</View>
+										);
+									}
+								)}
 							</ScrollView>
 						</View>
 					)}
