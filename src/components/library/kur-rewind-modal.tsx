@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-	View,
-	Text,
-	StyleSheet,
-	Modal,
-	TouchableOpacity,
-	ScrollView,
-	Image,
-} from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useHistoryStore } from '../../application/state/history-store';
 import { usePlaybackService } from '../../application/services/playback-service';
@@ -55,7 +47,10 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 					</TouchableOpacity>
 				</View>
 
-				<ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+				<ScrollView
+					contentContainerStyle={styles.scrollContent}
+					showsVerticalScrollIndicator={false}
+				>
 					{/* Stat Card 1: Total Minutes */}
 					<View style={styles.heroCard}>
 						<Ionicons name={'headset-outline'} size={32} color={'#A855F7'} />
@@ -80,13 +75,20 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 					{topArtists.length > 0 && (
 						<View style={styles.section}>
 							<Text style={styles.sectionTitle}>Your Top Artists</Text>
-							<ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.artistsRow}>
+							<ScrollView
+								horizontal
+								showsHorizontalScrollIndicator={false}
+								style={styles.artistsRow}
+							>
 								{topArtists.map((artist, idx) => {
 									const imgUrl = getArtworkUrl(artist.artwork);
 									return (
 										<View key={artist.name + idx} style={styles.artistCard}>
 											{imgUrl ? (
-												<Image source={{ uri: imgUrl }} style={styles.artistAvatar} />
+												<Image
+													source={{ uri: imgUrl }}
+													style={styles.artistAvatar}
+												/>
 											) : (
 												<View style={[styles.artistAvatar, styles.placeholderAvatar]}>
 													<Ionicons name={'person'} size={28} color={'#94A3B8'} />
@@ -95,7 +97,9 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 											<Text style={styles.artistName} numberOfLines={1}>
 												{artist.name}
 											</Text>
-											<Text style={styles.artistBadge}>{artist.count} plays</Text>
+											<Text style={styles.artistBadge}>
+												{artist.count} plays
+											</Text>
 										</View>
 									);
 								})}
@@ -117,7 +121,10 @@ export const KurRewindModal: React.FC<KurRewindModalProps> = ({ visible, onClose
 									>
 										<Text style={styles.trackRank}>#{index + 1}</Text>
 										{imgUrl ? (
-											<Image source={{ uri: imgUrl }} style={styles.trackThumb} />
+											<Image
+												source={{ uri: imgUrl }}
+												style={styles.trackThumb}
+											/>
 										) : (
 											<View style={[styles.trackThumb, styles.placeholderAvatar]}>
 												<Ionicons name={'musical-notes'} size={20} color={'#94A3B8'} />
