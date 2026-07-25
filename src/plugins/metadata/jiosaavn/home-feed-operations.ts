@@ -462,6 +462,19 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 		}
 	}
 
+	if (Array.isArray(launchData.radio) && launchData.radio.length > 0) {
+		const radioItems = mapArtistStationItems(launchData.radio);
+		const radioSection = createSection(
+			'radio',
+			'Featured Radio Stations',
+			radioItems,
+			'Language-tuned live station recommendations'
+		);
+		if (radioSection) {
+			sections.push(radioSection);
+		}
+	}
+
 	return {
 		sections: prioritizeSections(dedupeSections(sections)),
 		filterChips: [],

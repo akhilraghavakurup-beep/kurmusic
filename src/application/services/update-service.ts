@@ -100,7 +100,8 @@ export async function downloadUpdateApk(
 	onProgress: (progress: number) => void
 ): Promise<string> {
 	try {
-		const targetPath = `${FileSystem.cacheDirectory}kurmusic-update.apk`;
+		const targetDir = FileSystem.documentDirectory ?? FileSystem.cacheDirectory;
+		const targetPath = `${targetDir}kurmusic-update.apk`;
 		logger.debug(`Downloading update from: ${downloadUrl} to ${targetPath}`);
 
 		// Clean up any stale/incomplete APK download file first

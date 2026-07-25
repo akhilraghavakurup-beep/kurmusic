@@ -282,6 +282,28 @@ export class JioSaavnClient {
 		return payload.stationid;
 	}
 
+	async createFeaturedStation(
+		stationName: string,
+		language?: string,
+		signal?: AbortSignal
+	): Promise<string> {
+		const payload = await this._webGet<JioSaavnRadioStationResponse>(
+			'webradio.createFeaturedStation',
+			{
+				name: stationName,
+				language: language?.toLowerCase(),
+				station_type: 'featured',
+			},
+			{ language, signal }
+		);
+
+		if (!payload.stationid) {
+			throw new Error(payload.error || 'JioSaavn featured station was not found');
+		}
+
+		return payload.stationid;
+	}
+
 	async getRadioSongs(
 		stationId: string,
 		count = 20,

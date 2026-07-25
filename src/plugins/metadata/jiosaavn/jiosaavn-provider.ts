@@ -150,9 +150,25 @@ export class JioSaavnProvider implements MetadataProvider, AudioSourceProvider {
 			const languageHeader = getHomeContentLanguageHeader();
 			// Extract the first language as primary radio language (JioSaavn webradio expects a single language)
 			const primaryLanguage = languageHeader.split(',')[0] || 'english';
-			const stationId = await this.client.createArtistStation(artistName, primaryLanguage);
-			const songs = await this.client.getRadioSongs(stationId, limit, 1, primaryLanguage);
-			return ok(songs.map(mapSong).filter((track): track is Track => !!track));
+			let songs: ReturnType<typeof mapSong>[] = [];
+
+			try {
+				const stationId = await this.client.createFeaturedStation(artistName, primaryLanguage);
+				const fetched = await this.client.getRadioSongs(stationId, limit, 1, primaryLanguage);
+				if (fetched.length > 0) {
+					songs = fetched.map(mapSong);
+				}
+			} catch {
+				// Ignore and try artist station below
+			}
+
+			if (songs.length === 0) {
+				const stationId = await this.client.createArtistStation(artistName, primaryLanguage);
+				const fetched = await this.client.getRadioSongs(stationId, limit, 1, primaryLanguage);
+				songs = fetched.map(mapSong);
+			}
+
+			return ok(songs.filter((track): track is Track => !!track));
 		} catch (error) {
 			return err(error instanceof Error ? error : new Error(String(error)));
 		}
