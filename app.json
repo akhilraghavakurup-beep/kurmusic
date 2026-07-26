@@ -10,7 +10,7 @@
 		"newArchEnabled": true,
 		"android": {
 			"package": "com.kurmusic.app",
-			"versionCode": 20,
+			"versionCode": 21,
 			"permissions": ["android.permission.REQUEST_INSTALL_PACKAGES"],
 			"adaptiveIcon": {
 				"backgroundColor": "#E6F4FE",
