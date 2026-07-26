@@ -6,9 +6,9 @@ import { Platform } from 'react-native';
 import type { StreamQuality } from '@/src/domain/value-objects/audio-source';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
-export type TabId = 'feed' | 'library' | 'downloads' | 'search';
+export type TabId = 'feed' | 'library' | 'rewind' | 'downloads' | 'search';
 export type DefaultTab = TabId;
-export type LibraryTabId = 'songs' | 'playlists' | 'artists' | 'albums';
+export type LibraryTabId = 'songs' | 'playlists' | 'artists' | 'albums' | 'rewind';
 export type ProgressBarStyle =
 	| 'expressive'
 	| 'expressive-variant'
@@ -88,8 +88,8 @@ export const DEFAULT_HOME_FEED_PRIORITY: HomeFeedPrioritySection[] = [
 	'fresh-hits',
 ];
 
-export const DEFAULT_TAB_ORDER: TabId[] = ['feed', 'library', 'search', 'downloads'];
-export const DEFAULT_ENABLED_TABS: TabId[] = ['feed', 'library', 'search', 'downloads'];
+export const DEFAULT_TAB_ORDER: TabId[] = ['feed', 'rewind', 'library', 'search', 'downloads'];
+export const DEFAULT_ENABLED_TABS: TabId[] = ['feed', 'rewind', 'library', 'search', 'downloads'];
 export const REQUIRED_TABS: TabId[] = [];
 
 /**

@@ -1,5 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, StyleSheet } from 'react-native';
 import { Freeze } from 'react-freeze';
 import { TabsProvider, Tabs, TabScreen } from 'react-native-paper-tabs';
 import { PageLayout } from '@/src/components/ui/page-layout';
@@ -14,7 +13,6 @@ import {
 	AlbumList,
 	LibrarySortFilterSheet,
 } from '@/src/components/library';
-import { KurRewindModal } from '@/src/components/library/kur-rewind-modal';
 import { SortFilterFAB } from '@/src/components/sort-filter';
 import { useLibraryFilter } from '@/src/hooks/use-library-filter';
 import { useTabShadow } from '@/src/hooks/use-tab-shadow';
@@ -25,7 +23,6 @@ export default function HomeScreen() {
 	const { colors } = useAppTheme();
 	const defaultLibraryTab = useDefaultLibraryTab();
 	const [tabIndex, setTabIndex] = useState(TAB_INDEX_MAP[defaultLibraryTab]);
-	const [isRewindOpen, setIsRewindOpen] = useState(false);
 	const hasAppliedDefaultRef = useRef(false);
 
 	useEffect(() => {
@@ -122,19 +119,9 @@ export default function HomeScreen() {
 			</View>
 
 			{tabIndex === 0 && (
-				<View style={styles.fabRow}>
-					<TouchableOpacity
-						style={styles.rewindFab}
-						onPress={() => setIsRewindOpen(true)}
-					>
-						<Ionicons name={'sparkles'} size={20} color={'#FFFFFF'} />
-						<Text style={styles.rewindFabText}>Rewind</Text>
-					</TouchableOpacity>
-					<SortFilterFAB filterCount={filterCount} onPress={openFilterSheet} />
-				</View>
+				<SortFilterFAB filterCount={filterCount} onPress={openFilterSheet} />
 			)}
 
-			<KurRewindModal visible={isRewindOpen} onClose={() => setIsRewindOpen(false)} />
 			<LibrarySortFilterSheet isOpen={isFilterSheetOpen} onClose={closeFilterSheet} />
 		</PageLayout>
 	);

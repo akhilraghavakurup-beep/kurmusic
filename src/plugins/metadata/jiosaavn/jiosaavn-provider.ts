@@ -148,40 +148,52 @@ export class JioSaavnProvider implements MetadataProvider, AudioSourceProvider {
 
 		try {
 			const languageHeader = getHomeContentLanguageHeader();
-			// Extract the first language as primary radio language (JioSaavn webradio expects a single language)
-			const primaryLanguage = languageHeader.split(',')[0] || 'english';
+			const selectedLangs = languageHeader
+				.split(',')
+				.map((l) => l.trim())
+				.filter(Boolean);
+			const languagesToTry = Array.from(
+				new Set([
+					...selectedLangs,
+					'english',
+					'hindi',
+					'tamil',
+					'malayalam',
+					'telugu',
+					'punjabi',
+				])
+			);
+
 			let songs: ReturnType<typeof mapSong>[] = [];
 
-			try {
-				const stationId = await this.client.createFeaturedStation(
-					artistName,
-					primaryLanguage
-				);
-				const fetched = await this.client.getRadioSongs(
-					stationId,
-					limit,
-					1,
-					primaryLanguage
-				);
-				if (fetched.length > 0) {
-					songs = fetched.map(mapSong);
+			// 1. Try featured radio station across candidate languages
+			for (const lang of languagesToTry) {
+				try {
+					const stationId = await this.client.createFeaturedStation(artistName, lang);
+					const fetched = await this.client.getRadioSongs(stationId, limit, 1, lang);
+					if (fetched.length > 0) {
+						songs = fetched.map(mapSong);
+						break;
+					}
+				} catch {
+					// continue trying next language
 				}
-			} catch {
-				// Ignore and try artist station below
 			}
 
+			// 2. Try artist radio station across candidate languages if featured returned no tracks
 			if (songs.length === 0) {
-				const stationId = await this.client.createArtistStation(
-					artistName,
-					primaryLanguage
-				);
-				const fetched = await this.client.getRadioSongs(
-					stationId,
-					limit,
-					1,
-					primaryLanguage
-				);
-				songs = fetched.map(mapSong);
+				for (const lang of languagesToTry) {
+					try {
+						const stationId = await this.client.createArtistStation(artistName, lang);
+						const fetched = await this.client.getRadioSongs(stationId, limit, 1, lang);
+						if (fetched.length > 0) {
+							songs = fetched.map(mapSong);
+							break;
+						}
+					} catch {
+						// continue trying next language
+					}
+				}
 			}
 
 			return ok(songs.filter((track): track is Track => !!track));

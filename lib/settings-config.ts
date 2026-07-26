@@ -12,6 +12,7 @@ import {
 	ImageIcon,
 	PaletteIcon,
 	SwatchBookIcon,
+	SparklesIcon,
 	type LucideIcon,
 } from 'lucide-react-native';
 import type {
@@ -65,6 +66,7 @@ export const LIBRARY_TAB_OPTIONS: { value: LibraryTabId; label: string; icon: Lu
 	{ value: 'playlists', label: 'Playlists', icon: ListMusicIcon },
 	{ value: 'artists', label: 'Artists', icon: UsersIcon },
 	{ value: 'albums', label: 'Albums', icon: DiscIcon },
+	{ value: 'rewind', label: 'Rewind', icon: SparklesIcon },
 ];
 
 export const TAB_INDEX_MAP: Record<LibraryTabId, number> = {
@@ -72,6 +74,7 @@ export const TAB_INDEX_MAP: Record<LibraryTabId, number> = {
 	playlists: 1,
 	artists: 2,
 	albums: 3,
+	rewind: 4,
 };
 
 export const PLAYER_BACKGROUND_OPTIONS: {

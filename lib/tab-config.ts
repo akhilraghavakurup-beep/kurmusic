@@ -3,6 +3,7 @@ import {
 	MusicIcon,
 	DownloadIcon,
 	SearchIcon,
+	SparklesIcon,
 	type LucideIcon,
 } from 'lucide-react-native';
 import type { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
@@ -30,6 +31,10 @@ export const TAB_CONFIG: Record<TabId, TabConfig> = {
 		icon: MusicIcon,
 		lottieSource: LibraryLottie,
 	},
+	rewind: {
+		title: 'Rewind',
+		icon: SparklesIcon,
+	},
 	downloads: {
 		title: 'Downloads',
 		icon: DownloadIcon,
@@ -42,6 +47,6 @@ export const TAB_CONFIG: Record<TabId, TabConfig> = {
 	},
 };
 
-export const TAB_ROUTES = ['/library', '/feed', '/downloads', '/search'];
+export const TAB_ROUTES = ['/feed', '/rewind', '/library', '/search', '/downloads'];
 
 export const TAB_BAR_HEIGHT = 75;
