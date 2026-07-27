@@ -1,11 +1,9 @@
 name: Push Update (OTA)
 
 on:
-    push:
-        branches: [main]
-        paths-ignore:
-            - '*.md'
-            - 'docs/**'
+    # Automatic push trigger disabled until further notice
+    # push:
+    #     branches: [main]
     workflow_dispatch:
         inputs:
             version:
