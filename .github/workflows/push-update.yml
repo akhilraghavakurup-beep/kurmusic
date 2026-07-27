@@ -130,6 +130,9 @@ jobs:
             - name: Install dependencies
               run: npm ci
 
+            - name: Generate native project
+              run: npx expo prebuild --platform android --clean
+
             - name: Tune Gradle memory & packaging options
               run: |
                   echo "org.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g -Dkotlin.daemon.jvm.options=-Xmx2g" >> android/gradle.properties
