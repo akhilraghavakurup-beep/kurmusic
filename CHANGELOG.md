@@ -1,6 +1,17 @@
 # Changelog - Kur Music
 
 All notable changes to the Kur Music application are documented in this file.
+## [1.2.2] - 2026-08-22
+
+### 📻 Radio Station Track Accuracy Fix
+- **Artist Radio Resolution**: Updated `JioSaavnProvider.getArtistStationTracks` to prioritize `createArtistStation` over generic featured stations. Now tapping artist radio stations accurately resolves tracks by the target artist and similar artist recommendations.
+
+### ⚡ Seamless Queue Transition & Suppressed Error Popups
+- **Queue Stream Pre-caching**: Updated `playback-operations.ts` to utilize pre-cached stream URLs and headers for upcoming queue tracks directly in the native player queue.
+- **Transient Error Suppression**: Updated `event-handler.ts` and `playback-service.ts` to filter out placeholder 404/dummy URL transition error events, eliminating false-alarm `"Unable to fetch song"` / `"Playback failed"` toast popups.
+
+### 📚 Home Feed Album-wise Listings Scope
+- **Expanded Album Matching**: Updated home feed section definition matchers to include `'new albums'`, `'latest albums'`, `'albums'`, and `'top albums'`, ensuring full shelf prominence for new and trending album releases.
 
 ## [1.2.1] - 2026-07-25
 
