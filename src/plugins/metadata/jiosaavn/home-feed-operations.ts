@@ -69,34 +69,45 @@ function mapMixedFeedItems(items: unknown[]): FeedItem[] {
 			continue;
 		}
 
-		const candidate = item as JioSaavnSong | JioSaavnPlaylist;
-		switch (candidate.type) {
-			case 'song':
-				{
-					const track = mapSong(candidate as JioSaavnSong);
-					if (track) {
-						mapped.push({ type: 'track', data: track });
-					}
-				}
-				break;
-			case 'album':
-				{
-					const album = mapAlbum(candidate as JioSaavnAlbum);
-					if (album) {
-						mapped.push({ type: 'album', data: album });
-					}
-				}
-				break;
-			case 'playlist':
-				{
-					const playlist = mapPlaylistFeed(candidate as JioSaavnPlaylist);
-					if (playlist) {
-						mapped.push({ type: 'playlist', data: playlist });
-					}
-				}
-				break;
-			default:
-				break;
+		const candidate = item as JioSaavnSong | JioSaavnAlbum | JioSaavnPlaylist;
+
+		if (candidate.type === 'song') {
+			const track = mapSong(candidate as JioSaavnSong);
+			if (track) {
+				mapped.push({ type: 'track', data: track });
+				continue;
+			}
+		} else if (candidate.type === 'album') {
+			const album = mapAlbum(candidate as JioSaavnAlbum);
+			if (album) {
+				mapped.push({ type: 'album', data: album });
+				continue;
+			}
+		} else if (candidate.type === 'playlist') {
+			const playlist = mapPlaylistFeed(candidate as JioSaavnPlaylist);
+			if (playlist) {
+				mapped.push({ type: 'playlist', data: playlist });
+				continue;
+			}
+		}
+
+		// Fallback for missing or non-standard type property
+		const album = mapAlbum(candidate as JioSaavnAlbum);
+		if (album) {
+			mapped.push({ type: 'album', data: album });
+			continue;
+		}
+
+		const track = mapSong(candidate as JioSaavnSong);
+		if (track) {
+			mapped.push({ type: 'track', data: track });
+			continue;
+		}
+
+		const playlist = mapPlaylistFeed(candidate as JioSaavnPlaylist);
+		if (playlist) {
+			mapped.push({ type: 'playlist', data: playlist });
+			continue;
 		}
 	}
 
@@ -358,15 +369,24 @@ function prioritizeSections(sections: FeedSection[]): FeedSection[] {
 		BLACKHOLE_SECTION_PRIORITY.map((key, index) => [key, index] as const)
 	);
 	const sectionToPriorityKey = (section: FeedSection): HomeFeedPrioritySection | null => {
+		const lowerId = section.id.toLowerCase();
+		const lowerTitle = section.title.toLowerCase();
+
+		if (
+			lowerId.includes('new-albums') ||
+			lowerId.includes('new-releases') ||
+			lowerTitle.includes('album') ||
+			lowerTitle.includes('new release')
+		) {
+			return 'new-releases';
+		}
+
 		switch (section.id) {
 			case 'jiosaavn-new-trending':
 				return 'trending-now';
 			case 'jiosaavn-localized-charts':
 			case 'jiosaavn-charts':
 				return 'top-charts';
-			case 'jiosaavn-localized-new-releases':
-			case 'jiosaavn-new-albums':
-				return 'new-releases';
 			case 'jiosaavn-city-mod':
 				return 'hot-in-thiruvananthapuram';
 			case 'jiosaavn-localized-editorial-picks':
@@ -377,7 +397,7 @@ function prioritizeSections(sections: FeedSection[]): FeedSection[] {
 			case 'jiosaavn-artist-recos':
 				return 'recommended-artist-stations';
 			default:
-				return section.title.trim().toLowerCase() === 'fresh hits' ? 'fresh-hits' : null;
+				return lowerTitle === 'fresh hits' ? 'fresh-hits' : null;
 		}
 	};
 
@@ -385,9 +405,25 @@ function prioritizeSections(sections: FeedSection[]): FeedSection[] {
 		configuredPriority.map((key, index) => [key, index])
 	);
 
+	const getBlackholeIndex = (id: string): number | undefined => {
+		const exact = blackholePriority.get(id);
+		if (exact !== undefined) return exact;
+		const lower = id.toLowerCase();
+		if (lower.includes('new-albums') || lower.includes('new-releases')) {
+			return blackholePriority.get('jiosaavn-new-albums');
+		}
+		if (lower.includes('trending')) {
+			return blackholePriority.get('jiosaavn-new-trending');
+		}
+		if (lower.includes('charts')) {
+			return blackholePriority.get('jiosaavn-charts');
+		}
+		return undefined;
+	};
+
 	return [...sections].sort((left, right) => {
-		const leftBlackhole = blackholePriority.get(left.id);
-		const rightBlackhole = blackholePriority.get(right.id);
+		const leftBlackhole = getBlackholeIndex(left.id);
+		const rightBlackhole = getBlackholeIndex(right.id);
 
 		if (leftBlackhole !== undefined && rightBlackhole !== undefined) {
 			return leftBlackhole - rightBlackhole;
@@ -453,8 +489,10 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 
 		const definition = SECTION_DEFINITIONS.find(
 			(candidate) =>
-				(candidate.key === moduleKey || candidate.key.startsWith('promo:')) &&
-				candidate.titleMatcher(title)
+				candidate.titleMatcher(title) ||
+				candidate.key === moduleKey ||
+				moduleKey.startsWith(candidate.key) ||
+				candidate.key.startsWith('promo:')
 		);
 
 		const mappedItems = definition ? definition.mapItems(items) : mapAnyFeedItems(items);
