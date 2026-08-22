@@ -166,10 +166,10 @@ export class JioSaavnProvider implements MetadataProvider, AudioSourceProvider {
 
 			let songs: ReturnType<typeof mapSong>[] = [];
 
-			// 1. Try featured radio station across candidate languages
+			// 1. Try artist radio station across candidate languages first
 			for (const lang of languagesToTry) {
 				try {
-					const stationId = await this.client.createFeaturedStation(artistName, lang);
+					const stationId = await this.client.createArtistStation(artistName, lang);
 					const fetched = await this.client.getRadioSongs(stationId, limit, 1, lang);
 					if (fetched.length > 0) {
 						songs = fetched.map(mapSong);
@@ -180,11 +180,11 @@ export class JioSaavnProvider implements MetadataProvider, AudioSourceProvider {
 				}
 			}
 
-			// 2. Try artist radio station across candidate languages if featured returned no tracks
+			// 2. Try featured radio station across candidate languages if artist station returned no tracks
 			if (songs.length === 0) {
 				for (const lang of languagesToTry) {
 					try {
-						const stationId = await this.client.createArtistStation(artistName, lang);
+						const stationId = await this.client.createFeaturedStation(artistName, lang);
 						const fetched = await this.client.getRadioSongs(stationId, limit, 1, lang);
 						if (fetched.length > 0) {
 							songs = fetched.map(mapSong);
