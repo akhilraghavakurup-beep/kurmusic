@@ -171,7 +171,14 @@ const SECTION_DEFINITIONS: SectionDefinition[] = [
 	},
 	{
 		key: 'new_albums',
-		titleMatcher: matchesTitle('new releases', 'new release'),
+		titleMatcher: matchesTitle(
+			'new releases',
+			'new release',
+			'new albums',
+			'latest albums',
+			'albums',
+			'top albums'
+		),
 		mapItems: mapMixedFeedItems,
 		subtitle: 'Fresh songs and albums just added',
 	},

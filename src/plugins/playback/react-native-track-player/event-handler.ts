@@ -164,7 +164,27 @@ export class EventHandler {
 		}
 	}
 
-	private _onPlaybackError(event: PlaybackErrorEvent): void {
+	private async _onPlaybackError(event: PlaybackErrorEvent): Promise<void> {
+		if (this._state.isTransitioning) {
+			logger.debug('Ignoring PlaybackError during active transition');
+			return;
+		}
+
+		if (event.message && (event.message.includes('placeholder.com') || event.message.includes('dummy'))) {
+			logger.debug('Ignoring PlaybackError for placeholder track URL');
+			return;
+		}
+
+		try {
+			const activeTrack = await TrackPlayer.getActiveTrack();
+			if (activeTrack && activeTrack.url && (activeTrack.url.includes('placeholder.com') || activeTrack.url.includes('dummy'))) {
+				logger.debug('Ignoring PlaybackError for native placeholder active track');
+				return;
+			}
+		} catch {
+			// ignore error fetching active track
+		}
+
 		logger.error(`PlaybackError: ${event.message} (code: ${event.code})`);
 		const error = new Error(event.message || 'Playback error');
 		this._updateStatus('error');

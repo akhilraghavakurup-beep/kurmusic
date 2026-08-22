@@ -546,6 +546,10 @@ export class PlaybackService {
 		);
 	}
 
+	getCachedStream(trackId: string): AudioStream | null {
+		return this._getCachedStream(trackId);
+	}
+
 	private _getCachedStream(trackId: string): AudioStream | null {
 		const cached = this._streamCache.get(trackId);
 		if (!cached) return null;
@@ -745,6 +749,16 @@ export class PlaybackService {
 		event: PlaybackEvent & { readonly type: 'error' },
 		store: ReturnType<typeof usePlayerStore.getState>
 	): void {
+		const isPlaceholderError =
+			event.error.message.includes('placeholder.com') ||
+			event.error.message.includes('dummy') ||
+			event.error.message.includes('404');
+
+		if (isPlaceholderError) {
+			logger.debug(`Ignoring transient placeholder error event: ${event.error.message}`);
+			return;
+		}
+
 		logger.debug(`Error event: ${event.error.message}`);
 		store._setError(event.error.message);
 		this._streamCache.clear();

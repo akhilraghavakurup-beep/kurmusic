@@ -22,6 +22,8 @@ import {
 	SKIP_PREVIOUS_THRESHOLD_SECONDS,
 } from './constants';
 
+import { getTrackIdString } from '@/src/domain/value-objects/track-id';
+import { playbackService } from '@/src/application/services/playback-service';
 import { usePlayerStore } from '@/src/application/state/player-store';
 
 const logger = getLogger('PlaybackOperations');
@@ -69,8 +71,11 @@ export class PlaybackOperations {
 				if (currentIndex >= 0 && currentIndex < appQueue.length) {
 					const subsequentTracks = appQueue.slice(currentIndex + 1);
 					subsequentTracks.forEach((t) => {
-						const dummyUrl = 'https://placeholder.com/dummy.mp3';
-						const mapped = mapToRNTPTrack(t, dummyUrl);
+						const trackIdStr = getTrackIdString(t.id);
+						const cached = playbackService.getCachedStream(trackIdStr);
+						const targetUrl = cached?.url ?? 'https://placeholder.com/dummy.mp3';
+						const targetHeaders = cached?.headers;
+						const mapped = mapToRNTPTrack(t, targetUrl, targetHeaders);
 						this._state.trackMap.set(mapped.id, t);
 						rntpTracksToAdd.push(mapped);
 					});
