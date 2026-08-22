@@ -170,14 +170,21 @@ export class EventHandler {
 			return;
 		}
 
-		if (event.message && (event.message.includes('placeholder.com') || event.message.includes('dummy'))) {
+		if (
+			event.message &&
+			(event.message.includes('placeholder.com') || event.message.includes('dummy'))
+		) {
 			logger.debug('Ignoring PlaybackError for placeholder track URL');
 			return;
 		}
 
 		try {
 			const activeTrack = await TrackPlayer.getActiveTrack();
-			if (activeTrack && activeTrack.url && (activeTrack.url.includes('placeholder.com') || activeTrack.url.includes('dummy'))) {
+			if (
+				activeTrack &&
+				activeTrack.url &&
+				(activeTrack.url.includes('placeholder.com') || activeTrack.url.includes('dummy'))
+			) {
 				logger.debug('Ignoring PlaybackError for native placeholder active track');
 				return;
 			}
