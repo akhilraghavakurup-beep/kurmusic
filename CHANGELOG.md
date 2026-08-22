@@ -1,6 +1,12 @@
 # Changelog - Kur Music
 
 All notable changes to the Kur Music application are documented in this file.
+## [1.2.3] - 2026-08-22
+
+### 💿 Fixed Missing New Release Albums on Home Feed
+- **Fallback Album Parser**: Updated `mapMixedFeedItems` in `home-feed-operations.ts` with a fallback album parser (`mapAlbum`) when `type` is missing or non-standard in provider launch payloads.
+- **Language-Specific Section Matching**: Expanded section definition matchers and section priority sorting so language-specific album modules (e.g. `new_albums_hindi`, `new_albums_malayalam`, `new_albums_tamil`) match properly and are placed at top priority on the Home Feed.
+
 ## [1.2.2] - 2026-08-22
 
 ### 📻 Radio Station Track Accuracy Fix
