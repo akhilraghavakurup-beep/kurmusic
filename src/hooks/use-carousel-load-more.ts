@@ -40,8 +40,7 @@ export function useCarouselLoadMore(section: FeedSection, trackItems: Track[]) {
 			if (!isTrackSection || lockRef.current) return;
 
 			const { contentOffset, contentSize, layoutMeasurement } = nativeEvent;
-			const distanceFromEnd =
-				contentSize.width - layoutMeasurement.width - contentOffset.x;
+			const distanceFromEnd = contentSize.width - layoutMeasurement.width - contentOffset.x;
 			if (distanceFromEnd > LOAD_MORE_THRESHOLD_PX) return;
 
 			const lastTrack = trackItems[trackItems.length - 1];
@@ -61,7 +60,9 @@ export function useCarouselLoadMore(section: FeedSection, trackItems: Track[]) {
 					const newItems: FeedItem[] = raw
 						.map((song) => {
 							const track = mapSong(song);
-							return track ? ({ type: 'track' as const, data: track } as FeedItem) : null;
+							return track
+								? ({ type: 'track' as const, data: track } as FeedItem)
+								: null;
 						})
 						.filter((item): item is FeedItem => item !== null);
 
@@ -82,5 +83,8 @@ export function useCarouselLoadMore(section: FeedSection, trackItems: Track[]) {
 		[isTrackSection, trackItems, section.id, appendItemsToSection]
 	);
 
-	return { isLoadingMore, handleHorizontalScroll: isTrackSection ? handleHorizontalScroll : undefined };
+	return {
+		isLoadingMore,
+		handleHorizontalScroll: isTrackSection ? handleHorizontalScroll : undefined,
+	};
 }

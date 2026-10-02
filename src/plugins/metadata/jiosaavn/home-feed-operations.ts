@@ -510,7 +510,11 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 		processedModuleKeys.add(moduleKey);
 	}
 
-	if (!processedModuleKeys.has('radio') && Array.isArray(launchData.radio) && launchData.radio.length > 0) {
+	if (
+		!processedModuleKeys.has('radio') &&
+		Array.isArray(launchData.radio) &&
+		launchData.radio.length > 0
+	) {
 		const radioItems = mapArtistStationItems(launchData.radio);
 		const radioSection = createSection(
 			'radio',
@@ -523,7 +527,11 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 		}
 	}
 
-	if (!processedModuleKeys.has('artist_recos') && Array.isArray(launchData.artist_recos) && launchData.artist_recos.length > 0) {
+	if (
+		!processedModuleKeys.has('artist_recos') &&
+		Array.isArray(launchData.artist_recos) &&
+		launchData.artist_recos.length > 0
+	) {
 		const artistRecoItems = mapArtistStationItems(launchData.artist_recos);
 		const artistRecoSection = createSection(
 			'artist_recos',
@@ -553,7 +561,8 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 				const lastTrack = [...section.items]
 					.reverse()
 					.find((item) => item.type === 'track');
-				if (!lastTrack || lastTrack.type !== 'track') return { sectionId: section.id, newItems: [] };
+				if (!lastTrack || lastTrack.type !== 'track')
+					return { sectionId: section.id, newItems: [] };
 
 				// Strip source prefix (e.g. "jiosaavn:") to get the raw JioSaavn song ID
 				const rawSongId = lastTrack.data.id.value.replace(/^[^:]+:/, '');
@@ -566,7 +575,7 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 				const existingIds = new Set(
 					section.items
 						.filter((item) => item.type === 'track')
-						.map((item) => item.type === 'track' ? item.data.id.value : '')
+						.map((item) => (item.type === 'track' ? item.data.id.value : ''))
 				);
 
 				const newItems: FeedItem[] = raw
