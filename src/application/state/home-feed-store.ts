@@ -22,6 +22,7 @@ interface HomeFeedState {
 
 	setSections: (sections: FeedSection[]) => void;
 	appendSections: (sections: FeedSection[]) => void;
+	appendItemsToSection: (sectionId: string, newItems: FeedSection['items']) => void;
 	setFilterChips: (chips: FeedFilterChip[]) => void;
 	setActiveFilterIndex: (index: number | null) => void;
 	setLoading: (isLoading: boolean) => void;
@@ -166,6 +167,31 @@ export const useHomeFeedStore = create<HomeFeedState>()(
 
 			appendSections: (sections: FeedSection[]) => {
 				set((state) => ({ sections: [...state.sections, ...sections] }));
+			},
+
+			appendItemsToSection: (sectionId: string, newItems: FeedSection['items']) => {
+				set((state) => ({
+					sections: state.sections.map((section) => {
+						if (section.id !== sectionId) return section;
+						const existingKeys = new Set(
+							section.items.map((item) => {
+								if (item.type === 'track') return `track:${item.data.id.value}`;
+								if (item.type === 'album') return `album:${item.data.id.value}`;
+								if (item.type === 'artist') return `artist:${item.data.id}`;
+								return `playlist:${item.data.id}`;
+							})
+						);
+						const dedupedNew = newItems.filter((item) => {
+							let key: string;
+							if (item.type === 'track') key = `track:${item.data.id.value}`;
+							else if (item.type === 'album') key = `album:${item.data.id.value}`;
+							else if (item.type === 'artist') key = `artist:${item.data.id}`;
+							else key = `playlist:${item.data.id}`;
+							return !existingKeys.has(key);
+						});
+						return { ...section, items: [...section.items, ...dedupedNew] };
+					}),
+				}));
 			},
 
 			setFilterChips: (filterChips: FeedFilterChip[]) => {

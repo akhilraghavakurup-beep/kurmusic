@@ -1,6 +1,19 @@
 # Changelog - Kur Music
 
 All notable changes to the Kur Music application are documented in this file.
+
+## [1.2.4] - 2026-10-02
+
+### 📻 Fixed Radio Stations & Duplicate Shelves
+- **Radio Station Resolver**: Fixed promo prefix matching bug in `home-feed-operations.ts` that erroneously intercepted radio modules with mixed feed parsers. Radio stations now correctly resolve and render their live streaming channels.
+- **Duplicate Shelf Elimination**: Added processing guards to ensure radio and artist recommendation shelves are never processed twice in the feed.
+- **Section-Level Deduplication**: Updated deduplication to operate within each carousel rather than stripping cards globally across different shelves, preserving full shelf lengths.
+
+### ⚡ Maximized Home Feed Curation & Dynamic Recommendations
+- **Parallel Pre-enrichment**: Added parallel recommendation fetching for track carousels during initial load. Shelves now load with 30–40 curated items horizontally right from the first fetch.
+- **Infinite Horizontal Scroll**: Added automatic horizontal load-more detection when scrolling near the end of track carousels to seamlessly fetch and append more recommended tracks.
+- **One-Tap Play All & Shuffle**: Added instant Play All and Shuffle buttons to the headers of track carousels for effortless continuous listening.
+
 ## [1.2.3] - 2026-08-22
 
 ### 💿 Fixed Missing New Release Albums on Home Feed

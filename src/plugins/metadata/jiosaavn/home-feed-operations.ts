@@ -330,7 +330,6 @@ function itemDedupKey(item: FeedItem): string {
 }
 
 function dedupeSections(sections: FeedSection[]): FeedSection[] {
-	const seenItems = new Set<string>();
 	const seenSectionTitles = new Set<string>();
 	const deduped: FeedSection[] = [];
 
@@ -340,12 +339,13 @@ function dedupeSections(sections: FeedSection[]): FeedSection[] {
 			continue;
 		}
 
+		const seenInThisSection = new Set<string>();
 		const items = section.items.filter((item) => {
 			const key = itemDedupKey(item);
-			if (seenItems.has(key)) {
+			if (seenInThisSection.has(key)) {
 				return false;
 			}
-			seenItems.add(key);
+			seenInThisSection.add(key);
 			return true;
 		});
 
@@ -478,6 +478,8 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 			)
 		: [];
 
+	const processedModuleKeys = new Set<string>();
+
 	for (const moduleKey of [...collectionOrder, ...promoCollectionOrder]) {
 		const module = launchData.modules?.[moduleKey];
 		const title = module?.title?.trim();
@@ -492,7 +494,7 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 				candidate.titleMatcher(title) ||
 				candidate.key === moduleKey ||
 				moduleKey.startsWith(candidate.key) ||
-				candidate.key.startsWith('promo:')
+				moduleKey.startsWith('promo:')
 		);
 
 		const mappedItems = definition ? definition.mapItems(items) : mapAnyFeedItems(items);
@@ -505,9 +507,10 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 		if (section) {
 			sections.push(section);
 		}
+		processedModuleKeys.add(moduleKey);
 	}
 
-	if (Array.isArray(launchData.radio) && launchData.radio.length > 0) {
+	if (!processedModuleKeys.has('radio') && Array.isArray(launchData.radio) && launchData.radio.length > 0) {
 		const radioItems = mapArtistStationItems(launchData.radio);
 		const radioSection = createSection(
 			'radio',
@@ -520,7 +523,7 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 		}
 	}
 
-	if (Array.isArray(launchData.artist_recos) && launchData.artist_recos.length > 0) {
+	if (!processedModuleKeys.has('artist_recos') && Array.isArray(launchData.artist_recos) && launchData.artist_recos.length > 0) {
 		const artistRecoItems = mapArtistStationItems(launchData.artist_recos);
 		const artistRecoSection = createSection(
 			'artist_recos',
@@ -533,8 +536,76 @@ async function buildHomeFeed(client: JioSaavnClient, language?: string): Promise
 		}
 	}
 
+	const deduped = dedupeSections(sections);
+
+	// ── Pre-enrich track sections with recommendations ────────────────────────
+	// For each section that contains tracks, fetch song suggestions in parallel
+	// so carousels start with more content without needing scroll-triggered load-more.
+	// We use Promise.allSettled so a failed enrichment never blocks the rest of the feed.
+	const MAX_TRACK_SECTION_ENRICHMENTS = 5;
+	const trackSections = deduped
+		.filter((s) => s.items.some((item) => item.type === 'track') && s.source === 'remote')
+		.slice(0, MAX_TRACK_SECTION_ENRICHMENTS);
+
+	if (trackSections.length > 0) {
+		const enrichmentResults = await Promise.allSettled(
+			trackSections.map(async (section) => {
+				const lastTrack = [...section.items]
+					.reverse()
+					.find((item) => item.type === 'track');
+				if (!lastTrack || lastTrack.type !== 'track') return { sectionId: section.id, newItems: [] };
+
+				// Strip source prefix (e.g. "jiosaavn:") to get the raw JioSaavn song ID
+				const rawSongId = lastTrack.data.id.value.replace(/^[^:]+:/, '');
+				if (!rawSongId) return { sectionId: section.id, newItems: [] };
+
+				const suggestions = await client.getSongSuggestions(rawSongId, 20, language);
+				const raw = Array.isArray(suggestions) ? suggestions : [];
+
+				// Build the set of IDs already in this section for deduplication
+				const existingIds = new Set(
+					section.items
+						.filter((item) => item.type === 'track')
+						.map((item) => item.type === 'track' ? item.data.id.value : '')
+				);
+
+				const newItems: FeedItem[] = raw
+					.map((song) => {
+						const track = mapSong(song);
+						if (!track || existingIds.has(track.id.value)) return null;
+						existingIds.add(track.id.value);
+						return { type: 'track' as const, data: track } as FeedItem;
+					})
+					.filter((item): item is FeedItem => item !== null);
+
+				return { sectionId: section.id, newItems };
+			})
+		);
+
+		// Apply enrichments — mutate a working copy of deduped sections
+		const enrichmentMap = new Map<string, FeedItem[]>();
+		for (const result of enrichmentResults) {
+			if (result.status === 'fulfilled' && result.value.newItems.length > 0) {
+				enrichmentMap.set(result.value.sectionId, result.value.newItems);
+			}
+		}
+
+		if (enrichmentMap.size > 0) {
+			const enriched = deduped.map((section) => {
+				const extras = enrichmentMap.get(section.id);
+				if (!extras) return section;
+				return { ...section, items: [...section.items, ...extras] };
+			});
+			return {
+				sections: prioritizeSections(enriched),
+				filterChips: [],
+				hasContinuation: false,
+			};
+		}
+	}
+
 	return {
-		sections: prioritizeSections(dedupeSections(sections)),
+		sections: prioritizeSections(deduped),
 		filterChips: [],
 		hasContinuation: false,
 	};

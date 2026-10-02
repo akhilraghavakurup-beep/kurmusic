@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useMemo } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { Text } from 'react-native-paper';
+import { View, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text, IconButton } from 'react-native-paper';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
@@ -16,6 +16,8 @@ import { ArtistCard } from './artist-card';
 import { PlaylistCard } from './playlist-card';
 import { useAppTheme } from '@/lib/theme';
 import { useUIStyle } from '@/src/application/state/settings-store';
+import { usePlayerStore } from '@/src/application/state/player-store';
+import { useCarouselLoadMore } from '@/src/hooks/use-carousel-load-more';
 import type { FeedSection } from '@/src/domain/entities/feed-section';
 import type { Track } from '@/src/domain/entities/track';
 
@@ -53,6 +55,31 @@ export const FeedCarousel = memo(function FeedCarousel({ section }: FeedCarousel
 			section.items.filter((item) => item.type === 'track').map((item) => item.data as Track),
 		[section.items]
 	);
+
+	const isTrackSection = trackItems.length > 0 && section.source === 'remote';
+
+	// ── Horizontal load-more (track sections only) ───────────────────────────
+	const { isLoadingMore, handleHorizontalScroll } = useCarouselLoadMore(section, trackItems);
+
+	// ── Play All ─────────────────────────────────────────────────────────────
+	const setQueue = usePlayerStore((s) => s.setQueue);
+	const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
+	const isShuffled = usePlayerStore((s) => s.isShuffled);
+
+	const handlePlayAll = useCallback(() => {
+		if (trackItems.length === 0) return;
+		// If currently shuffled, un-shuffle first so Play All plays in order
+		if (isShuffled) toggleShuffle();
+		setQueue(trackItems, 0);
+	}, [trackItems, setQueue, isShuffled, toggleShuffle]);
+
+	// ── Shuffle Play ─────────────────────────────────────────────────────────
+	const handleShuffle = useCallback(() => {
+		if (trackItems.length === 0) return;
+		setQueue(trackItems, 0);
+		// Enable shuffle after queuing so the store shuffles from position 0
+		if (!isShuffled) toggleShuffle();
+	}, [trackItems, setQueue, isShuffled, toggleShuffle]);
 
 	const isGlowFlow = uiStyle === 'glow-flow';
 	const isGlass = uiStyle === 'glass';
@@ -143,6 +170,26 @@ export const FeedCarousel = memo(function FeedCarousel({ section }: FeedCarousel
 						>
 							{section.title}
 						</Text>
+
+						{/* ▶ Play All + Shuffle — only shown for remote track sections */}
+						{isTrackSection && (
+							<View style={styles.headerActions}>
+								<IconButton
+									icon={'shuffle'}
+									size={18}
+									iconColor={colors.onSurfaceVariant}
+									onPress={handleShuffle}
+									style={styles.headerIconButton}
+								/>
+								<IconButton
+									icon={'play-circle-outline'}
+									size={20}
+									iconColor={colors.primary}
+									onPress={handlePlayAll}
+									style={styles.headerIconButton}
+								/>
+							</View>
+						)}
 					</View>
 					{section.subtitle && (
 						<Text variant={'bodySmall'} style={{ color: colors.onSurfaceVariant }}>
@@ -150,10 +197,13 @@ export const FeedCarousel = memo(function FeedCarousel({ section }: FeedCarousel
 						</Text>
 					)}
 				</View>
+
 				<ScrollView
 					horizontal
 					showsHorizontalScrollIndicator={false}
 					contentContainerStyle={styles.scrollContent}
+					onScroll={handleHorizontalScroll}
+					scrollEventThrottle={handleHorizontalScroll ? 200 : undefined}
 				>
 					{section.items.map((item, index) => (
 						<FeedCarouselItem
@@ -168,6 +218,13 @@ export const FeedCarousel = memo(function FeedCarousel({ section }: FeedCarousel
 							}
 						/>
 					))}
+
+					{/* Subtle spinner that appears at the right edge while fetching more */}
+					{isLoadingMore && (
+						<View style={styles.loadMoreSpinner}>
+							<ActivityIndicator size={'small'} color={colors.primary} />
+						</View>
+					)}
 				</ScrollView>
 			</View>
 		</View>
@@ -292,8 +349,21 @@ const styles = StyleSheet.create({
 		fontWeight: '700',
 		flex: 1,
 	},
+	headerActions: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 0,
+	},
+	headerIconButton: {
+		margin: 0,
+	},
 	scrollContent: {
 		paddingHorizontal: 16,
 		gap: 12,
+	},
+	loadMoreSpinner: {
+		width: 60,
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 });
